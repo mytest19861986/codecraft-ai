@@ -1,3 +1,6 @@
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
 const leads = [
   {
     fullName: "نمونه ثبت‌نام",
@@ -11,7 +14,14 @@ export const metadata = {
   title: "لیدهای ادمین"
 };
 
-export default function AdminLeadsPage() {
+export default async function AdminLeadsPage() {
+  const adminSecret = process.env.ADMIN_SESSION_SECRET;
+  const adminSession = (await cookies()).get("codecraft_admin_session")?.value;
+
+  if (!adminSecret || adminSession !== adminSecret) {
+    redirect("/admin/login");
+  }
+
   return (
     <section className="mx-auto w-full max-w-6xl px-5 py-12 sm:py-16">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">

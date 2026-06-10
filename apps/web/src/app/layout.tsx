@@ -1,7 +1,13 @@
 import type { Metadata, Viewport } from "next";
+import { Vazirmatn } from "next/font/google";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import "./globals.css";
+
+const vazirmatn = Vazirmatn({
+  subsets: ["arabic"],
+  display: "swap"
+});
 
 export const metadata: Metadata = {
   title: {
@@ -30,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa-IR" dir="rtl">
-      <body>
+      <body className={vazirmatn.className}>
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />
