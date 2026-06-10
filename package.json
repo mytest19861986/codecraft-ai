@@ -1,0 +1,16 @@
+{
+  "name": "codecraft",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm --prefix apps/web run dev",
+    "build": "npm --prefix apps/web run build",
+    "lint": "npm --prefix apps/web run lint",
+    "typecheck": "npm --prefix apps/web run typecheck",
+    "prisma:validate": "npm --prefix apps/web run prisma:validate",
+    "prisma:generate": "npm --prefix apps/web run prisma:generate"
+  }
+}
