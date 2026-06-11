@@ -18,7 +18,7 @@ export function HeroSection() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               href="/bootcamp"
-              className="inline-flex items-center justify-center rounded-md bg-[#9b5cff] px-6 py-4 text-sm font-black text-white shadow-[0_0_34px_rgba(155,92,255,.42)]"
+              className="inline-flex items-center justify-center rounded-md bg-[#9b5cff] px-6 py-4 text-sm font-black text-white shadow-[0_0_34px_rgba(155,92,255,.42)] transition-colors hover:bg-[#8a4de8]"
             >
               شروع کمپ ۳ روزه رایگان (ظرفیت محدود) 🚀
             </Link>

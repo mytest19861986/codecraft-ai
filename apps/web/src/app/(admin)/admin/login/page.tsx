@@ -1,5 +1,6 @@
 export const metadata = {
-  title: "ورود ادمین"
+  title: "ورود ادمین",
+  robots: { index: false, follow: false }
 };
 
 const errorMessages = {

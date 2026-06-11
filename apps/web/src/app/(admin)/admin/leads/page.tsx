@@ -127,7 +127,7 @@ export default async function AdminLeadsPage() {
                   <span dir="ltr" className="text-left font-mono text-[#dfe2f3]">
                     {lead.parentPhone || "ثبت نشده"}
                   </span>
-                  <span>{lead.city || "ثبت نشده"}</span>
+                  <span className="text-[#dfe2f3]">{lead.city || "ثبت نشده"}</span>
                   <span className={`w-fit rounded-md border px-2 py-1 text-xs font-black ${leadStatusClasses[lead.status as LeadStatus]}`}>
                     {leadStatusLabels[lead.status as LeadStatus]}
                   </span>

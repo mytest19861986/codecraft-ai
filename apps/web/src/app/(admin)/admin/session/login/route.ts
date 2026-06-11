@@ -1,3 +1,4 @@
+import { createHash, timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import {
   ADMIN_SESSION_COOKIE_NAME,
@@ -26,6 +27,14 @@ async function readPassword(request: NextRequest) {
   return typeof password === "string" ? password : "";
 }
 
+function hashPasswordDigest(password: string) {
+  return createHash("sha256").update(password, "utf8").digest();
+}
+
+function isAdminPasswordMatch(submittedPassword: string, adminPassword: string) {
+  return timingSafeEqual(hashPasswordDigest(submittedPassword), hashPasswordDigest(adminPassword));
+}
+
 export async function POST(request: NextRequest) {
   const adminPassword = process.env.ADMIN_PASSWORD;
   const sessionValue = createAdminSessionCookieValue();
@@ -43,7 +52,7 @@ export async function POST(request: NextRequest) {
 
   const password = await readPassword(request);
 
-  if (password !== adminPassword) {
+  if (!isAdminPasswordMatch(password, adminPassword)) {
     if (wantsJson) {
       return NextResponse.json({ error: "INVALID_CREDENTIALS" }, { status: 401 });
     }
