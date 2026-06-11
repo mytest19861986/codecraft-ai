@@ -9,6 +9,7 @@ const ui = {
   pageTitle: "لیدهای ادمین",
   heading: "لیدهای بوت‌کمپ",
   banner: "نمای محافظت‌شده MVP؛ فقط برای بررسی اولیه لیدها",
+  countLabel: "تعداد لیدها",
   emptyTitle: "هنوز هیچ لیدی ثبت نشده است.",
   emptyDescription: "بعد از ارسال فرم بوت‌کمپ، اطلاعات اینجا نمایش داده می‌شود.",
   columns: {
@@ -28,6 +29,13 @@ const leadStatusLabels: Record<LeadStatus, string> = {
   CONTACTED: "تماس گرفته شده",
   REGISTERED: "ثبت‌نام شده",
   REJECTED: "رد شده"
+};
+
+const leadStatusClasses: Record<LeadStatus, string> = {
+  NEW: "border-[#39ff88]/30 bg-[#39ff88]/10 text-[#dfffea]",
+  CONTACTED: "border-[#66d9ff]/30 bg-[#66d9ff]/10 text-[#d5f4ff]",
+  REGISTERED: "border-[#9b5cff]/30 bg-[#9b5cff]/10 text-[#eadfff]",
+  REJECTED: "border-[#ff6b9d]/30 bg-[#ff6b9d]/10 text-[#ffd6e5]"
 };
 
 const dateFormatter = new Intl.DateTimeFormat("fa-IR", {
@@ -69,15 +77,20 @@ export default async function AdminLeadsPage() {
         <div>
           <p className="text-sm font-bold text-[#39ff88]">Admin Leads</p>
           <h1 className="mt-2 text-3xl font-black text-white">{ui.heading}</h1>
+          <p className="mt-3 text-sm font-bold text-[#d9dcf0]">
+            {ui.countLabel}: <span className="text-[#39ff88]">{leads.length.toLocaleString("fa-IR")}</span>
+          </p>
         </div>
-        <span className="w-fit rounded-md border border-[#39ff88]/30 bg-[#39ff88]/10 px-3 py-2 text-xs font-bold text-[#dfffea]">
-          {ui.banner}
-        </span>
-        <form action="/admin/session" method="post">
-          <button className="rounded-md border border-white/15 px-4 py-2 text-sm font-bold text-white hover:border-[#ff6b9d] hover:text-[#ffd6e5]" type="submit">
-            خروج
-          </button>
-        </form>
+        <div className="flex flex-col gap-3 sm:items-end">
+          <span className="w-fit rounded-md border border-[#39ff88]/30 bg-[#39ff88]/10 px-3 py-2 text-xs font-bold text-[#dfffea]">
+            {ui.banner}
+          </span>
+          <form action="/admin/session" method="post">
+            <button className="rounded-md border border-white/15 px-4 py-2 text-sm font-bold text-white hover:border-[#ff6b9d] hover:text-[#ffd6e5]" type="submit">
+              خروج
+            </button>
+          </form>
+        </div>
       </div>
 
       <div className="glass-panel neon-ring mt-8 overflow-hidden rounded-lg">
@@ -109,13 +122,13 @@ export default async function AdminLeadsPage() {
                   <span dir="ltr" className="text-left font-mono text-[#dfe2f3]">
                     {lead.phone}
                   </span>
-                  <span>{leadAgeRangeLabels[lead.ageRange as LeadAgeRange]}</span>
-                  <span>{leadSkillLevelLabels[lead.skillLevel as LeadSkillLevel]}</span>
+                  <span className="text-[#dfe2f3]">{leadAgeRangeLabels[lead.ageRange as LeadAgeRange]}</span>
+                  <span className="text-[#dfe2f3]">{leadSkillLevelLabels[lead.skillLevel as LeadSkillLevel]}</span>
                   <span dir="ltr" className="text-left font-mono text-[#dfe2f3]">
-                    {lead.parentPhone || "—"}
+                    {lead.parentPhone || "ثبت نشده"}
                   </span>
-                  <span>{lead.city || "—"}</span>
-                  <span className="font-bold text-[#39ff88]">
+                  <span>{lead.city || "ثبت نشده"}</span>
+                  <span className={`w-fit rounded-md border px-2 py-1 text-xs font-black ${leadStatusClasses[lead.status as LeadStatus]}`}>
                     {leadStatusLabels[lead.status as LeadStatus]}
                   </span>
                   <time dir="ltr" className="text-left text-[#a9aec7]" dateTime={lead.createdAt.toISOString()}>

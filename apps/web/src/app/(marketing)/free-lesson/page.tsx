@@ -9,9 +9,9 @@ export default function FreeLessonPage() {
   return (
     <section className="mx-auto w-full max-w-6xl px-5 py-12 sm:py-16">
       <SectionHeading
-        eyebrow="Free Lesson"
-        title="اولین ماموریت: ساخت منطق یک بازی ساده"
-        subtitle="یک درس کوتاه برای لمس کردن سبک یادگیری کدکرافت؛ پروژه‌محور، فارسی، و مناسب شروع از صفر."
+        eyebrow="Lesson Preview"
+        title="پیش‌نمایش درس رایگان: منطق یک بازی ساده"
+        subtitle="این صفحه فعلاً یک تیزر آماده‌نمایش از سبک یادگیری کدکرافت است؛ ویدئوی واقعی و محتوای کامل درس در فاز بعدی منتشر می‌شود."
       />
 
       <div className="mt-8 grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
@@ -19,7 +19,7 @@ export default function FreeLessonPage() {
           <div className="aspect-video rounded-lg border border-white/10 bg-[#151622] p-5">
             <div className="flex h-full flex-col justify-between">
               <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#39ff88]">
-                lesson preview
+                coming soon
               </p>
 
               <div>
@@ -27,7 +27,7 @@ export default function FreeLessonPage() {
                   الگوریتم یعنی نقشه حمله
                 </h2>
                 <p className="mt-3 max-w-2xl text-sm leading-7 text-[#a9aec7]">
-                  مسئله را به مرحله‌های کوچک تقسیم می‌کنیم و با شبه‌کد، مسیر ساخت یک بازی حدس عدد را طراحی می‌کنیم.
+                  در نسخه کامل، مسئله را به مرحله‌های کوچک تقسیم می‌کنیم و با شبه‌کد، مسیر ساخت یک بازی حدس عدد را طراحی می‌کنیم.
                 </p>
               </div>
             </div>

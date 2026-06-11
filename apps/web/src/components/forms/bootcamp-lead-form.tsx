@@ -6,6 +6,13 @@ import type { LeadAgeRange, LeadSkillLevel } from "@/types";
 
 type SubmitState = "idle" | "submitting" | "success" | "error" | "duplicate";
 
+const messages: Record<Exclude<SubmitState, "idle" | "submitting">, string> = {
+  success:
+    "ثبت شد! تیم پذیرش کدکرافت اطلاعاتت رو بررسی می‌کند و مسیر ورود به مینی‌دوره از راه‌های رسمی اطلاع‌رسانی می‌شود.",
+  duplicate: "این شماره قبلا ثبت شده است. اگر نیاز به تغییر اطلاعات داری، منتظر تماس تیم پذیرش بمان.",
+  error: "ثبت انجام نشد. شماره موبایل باید با 09 شروع شود و ۱۱ رقم باشد؛ بقیه فیلدها را هم کامل کن."
+};
+
 export function BootcampLeadForm() {
   const [state, setState] = useState<SubmitState>("idle");
 
@@ -21,27 +28,33 @@ export function BootcampLeadForm() {
       skillLevel: String(formData.get("skillLevel") ?? "")
     };
 
-    const response = await fetch("/api/v1/leads", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
+    try {
+      const response = await fetch("/api/v1/leads", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
 
-    if (response.status === 201) {
-      setState("success");
-      event.currentTarget.reset();
-      return;
+      if (response.status === 201) {
+        setState("success");
+        event.currentTarget.reset();
+        return;
+      }
+
+      setState(response.status === 409 ? "duplicate" : "error");
+    } catch {
+      setState("error");
     }
-
-    setState(response.status === 409 ? "duplicate" : "error");
   }
 
   return (
     <form onSubmit={onSubmit} className="glass-panel neon-ring rounded-lg p-5 sm:p-6">
       <h2 className="text-2xl font-black text-white">ثبت‌نام اولیه بوت‌کمپ</h2>
-      <p className="mt-2 text-sm leading-7 text-[#a9aec7]">چهار فیلد کوتاه؛ بدون ارسال پیامک یا اتصال بیرونی.</p>
+      <p className="mt-2 text-sm leading-7 text-[#a9aec7]">
+        چهار فیلد کوتاه برای شروع مسیر؛ اطلاعات فقط برای هماهنگی پذیرش و معرفی مینی‌دوره استفاده می‌شود.
+      </p>
 
       <div className="mt-6 space-y-4">
         <label className="block">
@@ -65,8 +78,12 @@ export function BootcampLeadForm() {
             name="phone"
             pattern="09[0-9]{9}"
             required
+            title="شماره موبایل باید با 09 شروع شود و ۱۱ رقم باشد."
             placeholder="09123456789"
           />
+          <span className="mt-2 block text-xs leading-6 text-[#a9aec7]">
+            نمونه درست: 09123456789
+          </span>
         </label>
 
         <label className="block">
@@ -112,13 +129,26 @@ export function BootcampLeadForm() {
         className="mt-6 w-full rounded-md bg-[#9b5cff] px-5 py-3 text-sm font-black text-white shadow-[0_0_30px_rgba(155,92,255,.35)] disabled:cursor-wait disabled:opacity-70"
         disabled={state === "submitting"}
         type="submit"
+        aria-busy={state === "submitting"}
       >
-        {state === "submitting" ? "در حال ثبت..." : "شروع کمپ ۳ روزه رایگان (ظرفیت محدود) 🚀"}
+        {state === "submitting" ? "در حال ثبت اطلاعات..." : "شروع کمپ ۳ روزه رایگان (ظرفیت محدود) 🚀"}
       </button>
 
-      {state === "success" ? <p className="mt-4 text-sm font-bold text-[#39ff88]">ثبت شد. تیم پذیرش بررسی می‌کند.</p> : null}
-      {state === "duplicate" ? <p className="mt-4 text-sm font-bold text-[#ffcc66]">این شماره قبلا ثبت شده است.</p> : null}
-      {state === "error" ? <p className="mt-4 text-sm font-bold text-[#ff6b9d]">ثبت انجام نشد. اطلاعات را بررسی کن.</p> : null}
+      {state === "success" ? (
+        <p className="mt-4 rounded-md border border-[#39ff88]/30 bg-[#39ff88]/10 px-3 py-3 text-sm font-bold leading-7 text-[#dfffea]">
+          {messages.success}
+        </p>
+      ) : null}
+      {state === "duplicate" ? (
+        <p className="mt-4 rounded-md border border-[#ffcc66]/30 bg-[#ffcc66]/10 px-3 py-3 text-sm font-bold leading-7 text-[#ffe8ad]">
+          {messages.duplicate}
+        </p>
+      ) : null}
+      {state === "error" ? (
+        <p className="mt-4 rounded-md border border-[#ff6b9d]/30 bg-[#ff6b9d]/10 px-3 py-3 text-sm font-bold leading-7 text-[#ffd6e5]">
+          {messages.error}
+        </p>
+      ) : null}
     </form>
   );
 }

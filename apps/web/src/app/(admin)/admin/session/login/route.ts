@@ -32,7 +32,13 @@ export async function POST(request: NextRequest) {
   const wantsJson = isJsonRequest(request);
 
   if (!adminPassword || !process.env.ADMIN_SESSION_SECRET || !sessionValue) {
-    return NextResponse.json({ error: "ADMIN_AUTH_NOT_CONFIGURED" }, { status: 500 });
+    if (wantsJson) {
+      return NextResponse.json({ error: "AUTH_UNAVAILABLE" }, { status: 500 });
+    }
+
+    return NextResponse.redirect(new URL("/admin/login?error=unavailable", request.url), {
+      status: 303
+    });
   }
 
   const password = await readPassword(request);

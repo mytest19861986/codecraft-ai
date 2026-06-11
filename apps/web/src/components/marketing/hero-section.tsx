@@ -29,7 +29,7 @@ export function HeroSection() {
               دیدن درس رایگان
             </Link>
           </div>
-          <p className="mt-4 text-sm font-bold text-[#a9aec7]">بدون نیاز به پیش‌زمینه | دسترسی آنی در وب‌سایت</p>
+          <p className="mt-4 text-sm font-bold text-[#a9aec7]">بدون نیاز به پیش‌زمینه | مسیر شروع پس از ثبت‌نام اطلاع‌رسانی می‌شود</p>
         </div>
 
         <div className="glass-panel neon-ring rounded-lg p-4">
