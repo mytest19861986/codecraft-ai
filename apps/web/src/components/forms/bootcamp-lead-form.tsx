@@ -63,6 +63,7 @@ export function BootcampLeadForm() {
             dir="ltr"
             inputMode="tel"
             name="phone"
+            pattern="09[0-9]{9}"
             required
             placeholder="09123456789"
           />

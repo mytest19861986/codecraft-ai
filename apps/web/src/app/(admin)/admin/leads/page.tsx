@@ -1,32 +1,33 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
+import { ADMIN_SESSION_COOKIE_NAME, verifyAdminSessionCookie } from "@/lib/security/admin-session";
 import { leadAgeRangeLabels, leadSkillLevelLabels } from "@/lib/validators/lead";
 import type { LeadAgeRange, LeadSkillLevel, LeadStatus } from "@/types";
 
 const ui = {
-  pageTitle: "\u{644}\u{6cc}\u{62f}\u{647}\u{627}\u{6cc} \u{627}\u{62f}\u{645}\u{6cc}\u{646}",
-  heading: "\u{644}\u{6cc}\u{62f}\u{647}\u{627}\u{6cc} \u{628}\u{648}\u{62a}\u{200c}\u{6a9}\u{645}\u{67e}",
-  banner: "\u{646}\u{645}\u{627}\u{6cc} \u{645}\u{62d}\u{627}\u{641}\u{638}\u{62a}\u{200c}\u{634}\u{62f}\u{647} MVP\u{61b} \u{641}\u{642}\u{637} \u{628}\u{631}\u{627}\u{6cc} \u{628}\u{631}\u{631}\u{633}\u{6cc} \u{627}\u{648}\u{644}\u{6cc}\u{647} \u{644}\u{6cc}\u{62f}\u{647}\u{627}",
-  emptyTitle: "\u{647}\u{646}\u{648}\u{632} \u{647}\u{6cc}\u{686} \u{644}\u{6cc}\u{62f}\u{6cc} \u{62b}\u{628}\u{62a} \u{646}\u{634}\u{62f}\u{647} \u{627}\u{633}\u{62a}.",
-  emptyDescription: "\u{628}\u{639}\u{62f} \u{627}\u{632} \u{627}\u{631}\u{633}\u{627}\u{644} \u{641}\u{631}\u{645} \u{628}\u{648}\u{62a}\u{200c}\u{6a9}\u{645}\u{67e}\u{60c} \u{627}\u{637}\u{644}\u{627}\u{639}\u{627}\u{62a} \u{627}\u{6cc}\u{646}\u{62c}\u{627} \u{646}\u{645}\u{627}\u{6cc}\u{634} \u{62f}\u{627}\u{62f}\u{647} \u{645}\u{6cc}\u{200c}\u{634}\u{648}\u{62f}.",
+  pageTitle: "لیدهای ادمین",
+  heading: "لیدهای بوت‌کمپ",
+  banner: "نمای محافظت‌شده MVP؛ فقط برای بررسی اولیه لیدها",
+  emptyTitle: "هنوز هیچ لیدی ثبت نشده است.",
+  emptyDescription: "بعد از ارسال فرم بوت‌کمپ، اطلاعات اینجا نمایش داده می‌شود.",
   columns: {
-    name: "\u{646}\u{627}\u{645}",
-    phone: "\u{645}\u{648}\u{628}\u{627}\u{6cc}\u{644}",
-    age: "\u{633}\u{646}",
-    skill: "\u{633}\u{637}\u{62d} \u{645}\u{647}\u{627}\u{631}\u{62a}",
-    parentPhone: "\u{645}\u{648}\u{628}\u{627}\u{6cc}\u{644} \u{648}\u{627}\u{644}\u{62f}",
-    city: "\u{634}\u{647}\u{631}",
-    status: "\u{648}\u{636}\u{639}\u{6cc}\u{62a}",
-    createdAt: "\u{62a}\u{627}\u{631}\u{6cc}\u{62e} \u{62b}\u{628}\u{62a}"
+    name: "نام",
+    phone: "موبایل",
+    age: "سن",
+    skill: "سطح مهارت",
+    parentPhone: "موبایل والد",
+    city: "شهر",
+    status: "وضعیت",
+    createdAt: "تاریخ ثبت"
   }
 } as const;
 
 const leadStatusLabels: Record<LeadStatus, string> = {
-  NEW: "\u{62c}\u{62f}\u{6cc}\u{62f}",
-  CONTACTED: "\u{62a}\u{645}\u{627}\u{633} \u{6af}\u{631}\u{641}\u{62a}\u{647} \u{634}\u{62f}\u{647}",
-  REGISTERED: "\u{62b}\u{628}\u{62a}\u{200c}\u{646}\u{627}\u{645} \u{634}\u{62f}\u{647}",
-  REJECTED: "\u{631}\u{62f} \u{634}\u{62f}\u{647}"
+  NEW: "جدید",
+  CONTACTED: "تماس گرفته شده",
+  REGISTERED: "ثبت‌نام شده",
+  REJECTED: "رد شده"
 };
 
 const dateFormatter = new Intl.DateTimeFormat("fa-IR", {
@@ -39,10 +40,9 @@ export const metadata = {
 };
 
 export default async function AdminLeadsPage() {
-  const adminSecret = process.env.ADMIN_SESSION_SECRET;
-  const adminSession = (await cookies()).get("codecraft_admin_session")?.value;
+  const adminSession = (await cookies()).get(ADMIN_SESSION_COOKIE_NAME)?.value;
 
-  if (!adminSecret || adminSession !== adminSecret) {
+  if (!verifyAdminSessionCookie(adminSession)) {
     redirect("/admin/login");
   }
 
@@ -73,6 +73,11 @@ export default async function AdminLeadsPage() {
         <span className="w-fit rounded-md border border-[#39ff88]/30 bg-[#39ff88]/10 px-3 py-2 text-xs font-bold text-[#dfffea]">
           {ui.banner}
         </span>
+        <form action="/admin/session" method="post">
+          <button className="rounded-md border border-white/15 px-4 py-2 text-sm font-bold text-white hover:border-[#ff6b9d] hover:text-[#ffd6e5]" type="submit">
+            خروج
+          </button>
+        </form>
       </div>
 
       <div className="glass-panel neon-ring mt-8 overflow-hidden rounded-lg">
@@ -107,9 +112,9 @@ export default async function AdminLeadsPage() {
                   <span>{leadAgeRangeLabels[lead.ageRange as LeadAgeRange]}</span>
                   <span>{leadSkillLevelLabels[lead.skillLevel as LeadSkillLevel]}</span>
                   <span dir="ltr" className="text-left font-mono text-[#dfe2f3]">
-                    {lead.parentPhone || "\u{2014}"}
+                    {lead.parentPhone || "—"}
                   </span>
-                  <span>{lead.city || "\u{2014}"}</span>
+                  <span>{lead.city || "—"}</span>
                   <span className="font-bold text-[#39ff88]">
                     {leadStatusLabels[lead.status as LeadStatus]}
                   </span>
