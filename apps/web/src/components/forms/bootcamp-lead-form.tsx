@@ -4,13 +4,23 @@ import { useState, type FormEvent } from "react";
 import { leadAgeRangeLabels, leadSkillLevelLabels } from "@/lib/validators/lead";
 import type { LeadAgeRange, LeadSkillLevel } from "@/types";
 
-type SubmitState = "idle" | "submitting" | "success" | "error" | "duplicate";
+type SubmitState =
+  | "idle"
+  | "submitting"
+  | "success"
+  | "duplicate"
+  | "validationError"
+  | "rateLimit"
+  | "serverError";
 
 const messages: Record<Exclude<SubmitState, "idle" | "submitting">, string> = {
   success:
-    "ثبت شد! تیم پذیرش کدکرافت اطلاعاتت رو بررسی می‌کند و مسیر ورود به مینی‌دوره از راه‌های رسمی اطلاع‌رسانی می‌شود.",
-  duplicate: "این شماره قبلا ثبت شده است. اگر نیاز به تغییر اطلاعات داری، منتظر تماس تیم پذیرش بمان.",
-  error: "ثبت انجام نشد. شماره موبایل باید با 09 شروع شود و ۱۱ رقم باشد؛ بقیه فیلدها را هم کامل کن."
+    "ثبت‌نام اولیه با موفقیت انجام شد. تیم کدکرافت اطلاعات را بررسی می‌کند و از مسیرهای رسمی با شما ارتباط می‌گیرد.",
+  duplicate: "این شماره قبلاً ثبت شده است. اگر منتظر تماس هستی، نیازی به ثبت دوباره نیست.",
+  validationError:
+    "ثبت انجام نشد. شماره موبایل باید با 09 شروع شود و ۱۱ رقم باشد؛ بقیه فیلدها را هم کامل کن.",
+  rateLimit: "تعداد تلاش‌ها زیاد شده است. چند دقیقه دیگر دوباره امتحان کن.",
+  serverError: "ثبت انجام نشد. لطفاً چند دقیقه دیگر دوباره امتحان کن."
 };
 
 export function BootcampLeadForm() {
@@ -18,9 +28,10 @@ export function BootcampLeadForm() {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
     setState("submitting");
 
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(form);
     const payload = {
       fullName: String(formData.get("fullName") ?? ""),
       phone: String(formData.get("phone") ?? ""),
@@ -37,15 +48,30 @@ export function BootcampLeadForm() {
         body: JSON.stringify(payload)
       });
 
-      if (response.status === 201) {
+      if (response.status >= 200 && response.status < 300) {
         setState("success");
-        event.currentTarget.reset();
+        form.reset();
         return;
       }
 
-      setState(response.status === 409 ? "duplicate" : "error");
+      if (response.status === 409) {
+        setState("duplicate");
+        return;
+      }
+
+      if (response.status === 400) {
+        setState("validationError");
+        return;
+      }
+
+      if (response.status === 429) {
+        setState("rateLimit");
+        return;
+      }
+
+      setState("serverError");
     } catch {
-      setState("error");
+      setState("serverError");
     }
   }
 
@@ -144,9 +170,9 @@ export function BootcampLeadForm() {
           {messages.duplicate}
         </p>
       ) : null}
-      {state === "error" ? (
+      {state === "validationError" || state === "rateLimit" || state === "serverError" ? (
         <p className="mt-4 rounded-md border border-[#ff6b9d]/30 bg-[#ff6b9d]/10 px-3 py-3 text-sm font-bold leading-7 text-[#ffd6e5]">
-          {messages.error}
+          {messages[state]}
         </p>
       ) : null}
     </form>
