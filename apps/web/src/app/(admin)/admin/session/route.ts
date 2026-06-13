@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { adminRedirectUrl } from "@/lib/security/admin-redirect";
 import { ADMIN_SESSION_COOKIE_NAME, adminSessionCookieOptions } from "@/lib/security/admin-session";
 
 function clearAdminSessionCookie(response: NextResponse) {
@@ -12,6 +13,6 @@ export async function DELETE() {
 
 export async function POST(request: NextRequest) {
   return clearAdminSessionCookie(
-    NextResponse.redirect(new URL("/admin/login", request.url), { status: 303 })
+    NextResponse.redirect(adminRedirectUrl(request, "/admin/login"), { status: 303 })
   );
 }

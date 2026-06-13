@@ -5,6 +5,7 @@ import {
   adminSessionCookieOptions,
   createAdminSessionCookieValue
 } from "@/lib/security/admin-session";
+import { adminRedirectUrl } from "@/lib/security/admin-redirect";
 
 function isJsonRequest(request: NextRequest) {
   const contentType = request.headers.get("content-type") ?? "";
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "AUTH_UNAVAILABLE" }, { status: 500 });
     }
 
-    return NextResponse.redirect(new URL("/admin/login?error=unavailable", request.url), {
+    return NextResponse.redirect(adminRedirectUrl(request, "/admin/login?error=unavailable"), {
       status: 303
     });
   }
@@ -57,12 +58,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "INVALID_CREDENTIALS" }, { status: 401 });
     }
 
-    return NextResponse.redirect(new URL("/admin/login?error=invalid", request.url), { status: 303 });
+    return NextResponse.redirect(adminRedirectUrl(request, "/admin/login?error=invalid"), { status: 303 });
   }
 
   const response = wantsJson
     ? NextResponse.json({ ok: true })
-    : NextResponse.redirect(new URL("/admin/leads", request.url), { status: 303 });
+    : NextResponse.redirect(adminRedirectUrl(request, "/admin/leads"), { status: 303 });
 
   response.cookies.set(ADMIN_SESSION_COOKIE_NAME, sessionValue, adminSessionCookieOptions());
 
