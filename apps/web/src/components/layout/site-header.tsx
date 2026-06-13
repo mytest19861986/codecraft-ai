@@ -26,7 +26,7 @@ export function SiteHeader() {
         </div>
         <Link
           href="/bootcamp"
-          className="rounded-md bg-[#39ff88] px-3 py-2 text-xs font-black text-[#0d0e12] sm:px-4"
+          className="rounded-md bg-[#22c55e] px-3 py-2 text-xs font-black text-black shadow-[0_0_15px_rgba(34,197,94,0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 hover:bg-[#39ff88] hover:shadow-[0_0_25px_rgba(34,197,94,0.75)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff88] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d0e12] sm:px-4"
         >
           شروع رایگان
         </Link>

@@ -21,6 +21,7 @@ html {
 }
 
 body {
+  position: relative;
   min-height: 100%;
   margin: 0;
   background:
@@ -29,6 +30,17 @@ body {
     linear-gradient(180deg, #0d0e12 0%, #11121a 52%, #0d0e12 100%);
   color: var(--foreground);
   font-family: Arial, Tahoma, sans-serif;
+}
+
+body::before {
+  pointer-events: none;
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(circle, rgba(57, 255, 136, 0.14) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.56), transparent 72%);
 }
 
 a {

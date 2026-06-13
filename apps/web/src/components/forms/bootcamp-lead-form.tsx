@@ -152,7 +152,7 @@ export function BootcampLeadForm() {
       </div>
 
       <button
-        className="mt-6 w-full rounded-md bg-[#9b5cff] px-5 py-3 text-sm font-black text-white shadow-[0_0_30px_rgba(155,92,255,.35)] disabled:cursor-wait disabled:opacity-70"
+        className="mt-6 w-full rounded-md bg-[#22c55e] px-5 py-3 text-sm font-black text-black shadow-[0_0_15px_rgba(34,197,94,0.45)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:bg-[#39ff88] hover:shadow-[0_0_25px_rgba(34,197,94,0.75)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff88] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d0e12] disabled:cursor-wait disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:scale-100"
         disabled={state === "submitting"}
         type="submit"
         aria-busy={state === "submitting"}

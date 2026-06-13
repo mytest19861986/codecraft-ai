@@ -16,7 +16,7 @@ export default function BootcampPage() {
         />
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {["چالش‌های کوتاه", "منتورینگ سبک", "خروجی قابل نمایش"].map((item) => (
-            <div key={item} className="glass-panel rounded-lg p-4 text-sm font-bold text-white">
+            <div key={item} className="rounded-lg border border-purple-500/20 bg-[#12121a]/80 p-4 text-sm font-bold text-white shadow-[0_0_22px_rgba(168,85,247,0.08)]">
               {item}
             </div>
           ))}

@@ -45,7 +45,7 @@ export default function FreeLessonPage() {
 
           <Link
             href="/bootcamp"
-            className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-[#39ff88] px-5 py-3 text-sm font-black text-[#0d0e12]"
+            className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-[#22c55e] px-5 py-3 text-sm font-black text-black shadow-[0_0_15px_rgba(34,197,94,0.45)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:bg-[#39ff88] hover:shadow-[0_0_25px_rgba(34,197,94,0.75)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff88] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d0e12]"
           >
             ثبت‌نام در کمپ ۳ روزه
           </Link>

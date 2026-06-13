@@ -28,9 +28,9 @@ export function ParentsFaqSection() {
       />
       <div className="mt-8 grid gap-4">
         {faqs.map((faq) => (
-          <article key={faq.question} className="glass-panel rounded-lg p-5">
-            <h3 className="text-lg font-black leading-8 text-white">{faq.question}</h3>
-            <p className="mt-3 text-sm leading-8 text-[#d9dcf0]">{faq.answer}</p>
+          <article key={faq.question} className="rounded-lg border border-white/12 bg-white/[0.055] px-5 py-6 shadow-[0_16px_48px_rgba(0,0,0,0.18)] backdrop-blur-md sm:px-7 sm:py-7">
+            <h3 className="text-lg font-black leading-9 text-white">{faq.question}</h3>
+            <p className="mt-3 text-sm leading-8 text-[#d9dcf0] sm:leading-9">{faq.answer}</p>
           </article>
         ))}
       </div>
