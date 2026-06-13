@@ -2,6 +2,12 @@ import "server-only";
 
 const SMSIR_VERIFY_ENDPOINT = "https://api.sms.ir/v1/send/verify";
 const SMSIR_TIMEOUT_MS = 8_000;
+const LEAD_CONFIRMATION_PARAMETERS = [
+  {
+    name: "Code",
+    value: "ثبت‌نام",
+  },
+];
 
 export type SmsIrVerifyResult = {
   ok: boolean;
@@ -50,6 +56,26 @@ function normalizeIranMobile(mobile: string): string | undefined {
   return undefined;
 }
 
+function maskMobileForLog(mobile: string): string {
+  const compact = mobile.trim().replace(/[\s\-()]/g, "");
+  const digits = compact.startsWith("+") ? compact.slice(1) : compact;
+  let localMobile: string | undefined;
+
+  if (digits.startsWith("09") && digits.length === 11) {
+    localMobile = digits;
+  } else if (digits.startsWith("989") && digits.length === 12) {
+    localMobile = `0${digits.slice(2)}`;
+  } else if (digits.startsWith("9") && digits.length === 10) {
+    localMobile = `0${digits}`;
+  }
+
+  if (!localMobile) {
+    return "***";
+  }
+
+  return `${localMobile.slice(0, 4)}***${localMobile.slice(-4)}`;
+}
+
 function readProviderResponse(text: string): SmsIrVerifyResponse | undefined {
   try {
     const parsed: unknown = JSON.parse(text);
@@ -67,6 +93,8 @@ export async function sendSmsIrVerifyCode(input: {
   mobile: string;
   code: string;
   templateId?: number;
+  parameters?: Array<{ name: string; value: string }>;
+  allowProductionSend?: boolean;
 }): Promise<SmsIrVerifyResult> {
   const mode = process.env.SMSIR_MODE;
   const apiKey = process.env.SMSIR_API_KEY;
@@ -77,7 +105,11 @@ export async function sendSmsIrVerifyCode(input: {
     return { ok: false, error: "SMSIR_CONFIG_MISSING" };
   }
 
-  if (mode === "production" && process.env.SMSIR_REAL_SEND_ENABLED !== "true") {
+  if (
+    mode === "production" &&
+    process.env.SMSIR_REAL_SEND_ENABLED !== "true" &&
+    input.allowProductionSend !== true
+  ) {
     return { ok: false, error: "SMSIR_REAL_SEND_NOT_ENABLED" };
   }
 
@@ -103,7 +135,7 @@ export async function sendSmsIrVerifyCode(input: {
       body: JSON.stringify({
         mobile,
         templateId,
-        parameters: [
+        parameters: input.parameters ?? [
           {
             name: "Code",
             value: input.code,
@@ -143,5 +175,58 @@ export async function sendSmsIrVerifyCode(input: {
     return { ok: false, error: "SMSIR_REQUEST_FAILED" };
   } finally {
     clearTimeout(timeout);
+  }
+}
+
+export async function sendLeadConfirmationSms(input: {
+  mobile: string;
+  name?: string;
+}): Promise<void> {
+  const mobile = maskMobileForLog(input.mobile);
+
+  if (process.env.SMS_LEAD_SMS_ENABLED !== "true") {
+    console.info("[smsir] lead sms skipped: disabled", { mobile });
+    return;
+  }
+
+  const templateId = parseTemplateId(process.env.SMS_LEAD_TEMPLATE_ID);
+
+  if (!templateId) {
+    console.warn("[smsir] lead sms skipped: missing template", { mobile });
+    return;
+  }
+
+  try {
+    console.info("[smsir] lead sms attempted", { mobile });
+
+    const result = await sendSmsIrVerifyCode({
+      mobile: input.mobile,
+      code: LEAD_CONFIRMATION_PARAMETERS[0].value,
+      templateId,
+      parameters: LEAD_CONFIRMATION_PARAMETERS,
+    });
+
+    if (!result.ok) {
+      console.warn("[smsir] lead sms failed", {
+        mobile,
+        error: result.error,
+        httpStatus: result.httpStatus,
+        providerStatus: result.providerStatus,
+        message: result.message,
+      });
+      return;
+    }
+
+    console.info("[smsir] lead sms success", {
+      mobile,
+      httpStatus: result.httpStatus,
+      providerStatus: result.providerStatus,
+      message: result.message,
+    });
+  } catch (error) {
+    console.warn("[smsir] lead sms failed", {
+      mobile,
+      error: error instanceof Error ? error.name : "UnknownError",
+    });
   }
 }

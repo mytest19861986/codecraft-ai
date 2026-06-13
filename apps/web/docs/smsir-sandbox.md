@@ -1,6 +1,6 @@
 # SMS.ir Verify Manual Test
 
-This is a controlled manual test for CodeCraft AI SMS.ir Verify infrastructure. It is not wired into the bootcamp lead form, admin login, OTP login, or any production user flow.
+This is a controlled manual test for CodeCraft AI SMS.ir Verify infrastructure. SMS.ir Verify is also optionally wired into the bootcamp lead form for a post-save confirmation SMS. It is not wired into admin login or OTP login.
 
 The manual script supports SMS.ir sandbox mode and a guarded production mode. Production mode may send a real SMS and may charge account credit.
 
@@ -77,3 +77,36 @@ https://api.sms.ir/v1/send/verify
 ```
 
 Production SMS should be enabled only after the sandbox test passes and the Verify template is approved in SMS.ir.
+
+## Bootcamp lead confirmation SMS
+
+The bootcamp lead API can send a confirmation SMS after a lead is saved. This is optional and disabled unless `SMS_LEAD_SMS_ENABLED` is exactly `true`.
+
+Required env vars:
+
+```env
+SMS_LEAD_SMS_ENABLED=true
+SMS_LEAD_TEMPLATE_ID=your_approved_lead_verify_template_id
+SMSIR_MODE=sandbox
+SMSIR_API_KEY=your_smsir_api_key
+```
+
+For production lead confirmation SMS, also set the guarded production send flag:
+
+```env
+SMSIR_MODE=production
+SMSIR_REAL_SEND_ENABLED=true
+```
+
+Use `SMSIR_MODE=production` only when the production Verify template is approved and account credit is ready. Production sends real SMS messages and may charge SMS.ir credit.
+
+The lead confirmation uses the SMS.ir Verify endpoint with this template parameter:
+
+```text
+name: Code
+value: ثبت‌نام
+```
+
+If a production template uses a different parameter name, adjust the small `LEAD_CONFIRMATION_PARAMETERS` mapping in `src/lib/sms/sms-ir.ts`.
+
+Lead submission is never blocked by SMS delivery. If SMS.ir configuration is missing or the provider request fails, the lead API still returns success after the lead is saved and logs only safe server-side diagnostics. Never print, log, or commit `SMSIR_API_KEY`.

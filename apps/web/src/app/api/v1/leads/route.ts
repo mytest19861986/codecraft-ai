@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
+import { sendLeadConfirmationSms } from "@/lib/sms/sms-ir";
 import { leadCreateSchema } from "@/lib/validators/lead";
 
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
@@ -79,6 +80,11 @@ export async function POST(request: Request) {
         status: true,
         createdAt: true
       }
+    });
+
+    await sendLeadConfirmationSms({
+      mobile: lead.phone,
+      name: lead.fullName
     });
 
     return NextResponse.json({ lead }, { status: 201 });
