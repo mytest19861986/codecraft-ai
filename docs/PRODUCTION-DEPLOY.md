@@ -1,6 +1,8 @@
 # Production Deploy
 
-This guide deploys CodeCraft AI on a VPS with Docker Compose, PostgreSQL, host-level Nginx, and Certbot SSL.
+This guide deploys CodeCraft AI on a VPS with Docker Compose or PM2, PostgreSQL, host-level Nginx, and Certbot SSL.
+
+Live VPS note: `codecraft-ai` runs on `127.0.0.1:3001` behind Nginx because Hami Card runs separately on port `3000` on the same server. Do not bind CodeCraft to port `3000` on that host.
 
 Do not commit real `.env` files, passwords, session secrets, database dumps, or server IP addresses.
 
@@ -27,7 +29,7 @@ Do not commit real `.env` files, passwords, session secrets, database dumps, or 
 Optional port binding variables:
 
 - `WEB_BIND_ADDRESS`: Defaults to `127.0.0.1`, which is suitable when Nginx reverse proxies from the host.
-- `WEB_PORT`: Defaults to `3000`.
+- `WEB_PORT`: Defaults to `3000` for generic Docker use. On the live VPS, set it to `3001` so it does not collide with Hami Card on port `3000`.
 - `POSTGRES_BIND_ADDRESS`: Defaults to `127.0.0.1`.
 
 ## 1. Clone The Repo
@@ -46,6 +48,8 @@ nano infra/.env.production
 ```
 
 Replace all placeholders with VPS-specific values. The `DATABASE_URL` host must stay `postgres` because it connects over the Docker Compose network.
+
+For the live VPS that also runs Hami Card, set `WEB_PORT=3001`. Keep Hami Card on port `3000`.
 
 Generate strong secrets with a local password manager or a command such as:
 
@@ -79,7 +83,13 @@ docker compose --env-file infra/.env.production -f infra/docker-compose.yml run 
 docker compose --env-file infra/.env.production -f infra/docker-compose.yml up -d --build web
 ```
 
-The default Compose settings publish the web app on `127.0.0.1:3000`, which is intended to be reached through Nginx, not directly from the public internet.
+The default Compose settings publish the web app on `127.0.0.1:3000`, which is intended to be reached through Nginx, not directly from the public internet. On the live VPS, override this with `WEB_PORT=3001` because Hami Card uses `127.0.0.1:3000`.
+
+For a PM2 deployment on the live VPS, start CodeCraft with the same host port:
+
+```bash
+PORT=3001 npm run start
+```
 
 ## 6. Configure Nginx Reverse Proxy
 
@@ -91,7 +101,7 @@ server {
     server_name codecraftai.ir www.codecraftai.ir;
 
     location / {
-        proxy_pass http://127.0.0.1:3000;
+        proxy_pass http://127.0.0.1:3001;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -136,7 +146,7 @@ sudo certbot renew --dry-run
 From the VPS:
 
 ```bash
-curl -fsS http://127.0.0.1:3000/api/v1/health
+curl -fsS http://127.0.0.1:3001/api/v1/health
 curl -fsS https://codecraftai.ir/api/v1/health
 curl -I https://codecraftai.ir/bootcamp
 curl -I https://codecraftai.ir/admin/login

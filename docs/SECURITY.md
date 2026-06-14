@@ -8,13 +8,18 @@ Secrets must never be committed. Keep values in local or deployment environment 
 - `ADMIN_PASSWORD`
 - `ADMIN_SESSION_SECRET`
 - `NEXT_PUBLIC_SITE_URL`
+- `SMSIR_API_KEY`
+- `SMS_LEAD_SMS_ENABLED`
+- `SMS_LEAD_TEMPLATE_ID`
 
 `ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET` must be strong values configured outside Git.
+SMS.ir credentials and flags must stay in `.env` or deployment environment variables only.
 `.env`, `.env.local`, and `.env*.local` are ignored.
 
 ## Sprint Zero Constraints
 
-- No real SMS provider is integrated.
+- SMS.ir optional lead confirmation is integrated for saved leads, disabled by default, and controlled by `SMS_LEAD_SMS_ENABLED`.
+- SMS.ir delivery failure must not block lead creation.
 - No real Telegram bot is integrated.
 - No payment provider is integrated.
 - No real OpenAI API calls are integrated.

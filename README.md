@@ -40,4 +40,6 @@ npm run build
 
 ## Security Notes
 
-No real SMS, Telegram bot, payment provider, or OpenAI API integration is implemented in Sprint Zero. Do not commit `.env` files or credentials.
+SMS.ir optional lead confirmation is implemented for saved leads and is disabled by default unless `SMS_LEAD_SMS_ENABLED=true`. SMS delivery failure does not block lead creation. Keep SMS.ir keys and all other secrets in `.env` only; do not commit `.env` files or credentials.
+
+No real Telegram bot, payment provider, or OpenAI API integration is implemented in Sprint Zero.
