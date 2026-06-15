@@ -1,10 +1,12 @@
-name: CI
+﻿name: Web Validation
 
 on:
   push:
     branches:
       - master
   pull_request:
+    branches:
+      - master
 
 jobs:
   web:
@@ -21,15 +23,12 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
+          node-version: '24'
+          cache: 'npm'
           cache-dependency-path: apps/web/package-lock.json
 
       - name: Install
         run: npm ci
-
-      - name: Validate Prisma
-        run: npx prisma validate
 
       - name: Lint
         run: npm run lint
@@ -39,3 +38,7 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Validate Prisma
+        run: npx prisma validate
+
