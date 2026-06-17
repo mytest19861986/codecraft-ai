@@ -23,6 +23,7 @@ Do not commit real `.env` files, passwords, session secrets, database dumps, or 
 - `POSTGRES_PASSWORD`: Strong database password. Keep it in the VPS env file only.
 - `ADMIN_PASSWORD`: Strong admin login password.
 - `ADMIN_SESSION_SECRET`: Long random secret used to sign admin sessions.
+- `STUDENT_SESSION_SECRET`: Long random secret used to sign student sessions. Use a different value from `ADMIN_SESSION_SECRET`.
 - `NEXT_PUBLIC_SITE_URL`: Public origin, for example `https://codecraftai.ir`.
 - `POSTGRES_PORT`: Optional host port for local administrative access to Postgres. Keep it bound to `127.0.0.1` unless there is a specific operations reason to expose it.
 
@@ -56,6 +57,8 @@ Generate strong secrets with a local password manager or a command such as:
 ```bash
 openssl rand -base64 48
 ```
+
+Generate separate values for `ADMIN_SESSION_SECRET` and `STUDENT_SESSION_SECRET`.
 
 ## 3. Build And Start PostgreSQL
 
@@ -154,6 +157,8 @@ curl -I https://codecraftai.ir/admin/leads
 ```
 
 Also submit a test lead through `/bootcamp` and confirm it appears in `/admin/leads`.
+
+For student auth, follow `docs/AUTH-SMOKE-TEST.md` after deploying or restarting the app.
 
 ## Operations Notes
 
