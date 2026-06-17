@@ -55,7 +55,7 @@ This document records the v0.3 authentication plan for CodeCraft AI. It is a pla
 1. Shared session core.
 2. Student register/login API.
 3. Student login/register pages.
-4. Protected dashboard shell.
+4. Protected dashboard shell. Implemented in v0.3 Task 005.
 5. Admin guard hardening.
 6. Validation and smoke tests.
 
