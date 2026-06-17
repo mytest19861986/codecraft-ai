@@ -41,6 +41,7 @@ This document records the v0.3 authentication plan for CodeCraft AI. It is a pla
 ## Session And Security Plan
 
 - Reuse and generalize the signed cookie payload to `{ sub, role, iat, exp }`.
+- Shared HMAC signed-cookie primitives live in `apps/web/src/lib/security/session-core.ts`; admin auth wraps them while preserving the existing admin cookie format.
 - Session cookies must be `httpOnly`, `sameSite: "strict"`, and `secure` in production.
 - Secrets must never be logged.
 - Add rate limiting to register and login routes when they are implemented.
