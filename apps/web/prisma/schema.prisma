@@ -8,48 +8,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  ADMIN
-  STUDENT
-  PARENT
-}
-
-enum LeadSkillLevel {
-  ABSOLUTE_BEGINNER
-  BASIC
-  PREVIOUS_CLASS
-}
-
-enum LeadAgeRange {
-  AGE_12_14
-  AGE_15_17
-  AGE_18_20
-}
-
-enum LeadStatus {
-  NEW
-  CONTACTED
-  REGISTERED
-  REJECTED
-}
-
-enum CourseLevel {
-  LEVEL_1
-  LEVEL_2
-  LEVEL_3
-  LEVEL_4
-}
-
 model User {
-  id           String          @id @default(cuid())
-  name         String
-  phone        String          @unique
-  email        String?         @unique
-  role         UserRole        @default(STUDENT)
-  passwordHash String?
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-  auditLogs    AdminAuditLog[]
+  id                   String          @id @default(cuid())
+  name                 String
+  phone                String          @unique
+  email                String?         @unique
+  role                 UserRole        @default(STUDENT)
+  passwordHash         String?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  xp                   Int             @default(0)
+  level                Int             @default(1)
+  lastLoginXpAwardedAt DateTime?
+  auditLogs            AdminAuditLog[]
 }
 
 model BootcampLead {
@@ -87,7 +58,6 @@ model Course {
 model Lesson {
   id        String   @id @default(cuid())
   courseId  String
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   title     String
   slug      String
   content   String
@@ -96,6 +66,7 @@ model Lesson {
   isFree    Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([courseId, slug])
   @@index([courseId])
@@ -104,13 +75,45 @@ model Lesson {
 model AdminAuditLog {
   id        String   @id @default(cuid())
   actorId   String?
-  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
   action    String
   entity    String
   entityId  String?
   metadata  Json?
   createdAt DateTime @default(now())
+  actor     User?    @relation(fields: [actorId], references: [id])
 
   @@index([actorId])
   @@index([entity])
+}
+
+enum UserRole {
+  ADMIN
+  STUDENT
+  PARENT
+}
+
+enum LeadSkillLevel {
+  ABSOLUTE_BEGINNER
+  BASIC
+  PREVIOUS_CLASS
+}
+
+enum LeadAgeRange {
+  AGE_12_14
+  AGE_15_17
+  AGE_18_20
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  REGISTERED
+  REJECTED
+}
+
+enum CourseLevel {
+  LEVEL_1
+  LEVEL_2
+  LEVEL_3
+  LEVEL_4
 }

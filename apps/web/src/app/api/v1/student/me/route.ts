@@ -47,6 +47,8 @@ export async function GET(request: NextRequest) {
         name: true,
         phone: true,
         role: true,
+        xp: true,
+        level: true,
         createdAt: true
       }
     });

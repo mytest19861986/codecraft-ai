@@ -10,6 +10,14 @@ import {
 } from "@/lib/security/student-session";
 import { studentLoginSchema } from "@/lib/validators/student-auth";
 
+const LOGIN_XP_REWARD = 10;
+const XP_PER_LEVEL = 100;
+const LOGIN_XP_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+
+function getLevelForXp(xp: number) {
+  return Math.floor(xp / XP_PER_LEVEL) + 1;
+}
+
 function errorResponse(code: string, message: string, status: number, details?: unknown) {
   return NextResponse.json(
     {
@@ -49,6 +57,8 @@ export async function POST(request: Request) {
         phone: true,
         role: true,
         passwordHash: true,
+        xp: true,
+        level: true,
         createdAt: true
       }
     });
@@ -69,11 +79,64 @@ export async function POST(request: Request) {
       return errorResponse("AUTH_UNAVAILABLE", "Authentication is unavailable.", 500);
     }
 
+    const now = new Date();
+    const loginXpCutoff = new Date(now.getTime() - LOGIN_XP_COOLDOWN_MS);
+    const loginXpAward = await prisma.user.updateMany({
+      where: {
+        id: user.id,
+        OR: [{ lastLoginXpAwardedAt: null }, { lastLoginXpAwardedAt: { lt: loginXpCutoff } }]
+      },
+      data: {
+        xp: {
+          increment: LOGIN_XP_REWARD
+        },
+        lastLoginXpAwardedAt: now
+      }
+    });
+
+    let xp = user.xp;
+    let level = user.level;
+
+    if (loginXpAward.count > 0) {
+      const rewardedUser = await prisma.user.findUnique({
+        where: {
+          id: user.id
+        },
+        select: {
+          xp: true,
+          level: true
+        }
+      });
+
+      if (rewardedUser) {
+        const nextLevel = getLevelForXp(rewardedUser.xp);
+        const updatedUser =
+          rewardedUser.level === nextLevel
+            ? rewardedUser
+            : await prisma.user.update({
+                where: {
+                  id: user.id
+                },
+                data: {
+                  level: nextLevel
+                },
+                select: {
+                  xp: true,
+                  level: true
+                }
+              });
+        xp = updatedUser.xp;
+        level = updatedUser.level;
+      }
+    }
+
     const safeUser = {
       id: user.id,
       name: user.name,
       phone: user.phone,
       role: user.role,
+      xp,
+      level,
       createdAt: user.createdAt
     };
     const response = NextResponse.json({ ok: true, user: safeUser });

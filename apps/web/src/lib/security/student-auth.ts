@@ -8,6 +8,8 @@ export type AuthenticatedStudent = {
   name: string;
   phone: string;
   role: typeof UserRole.STUDENT;
+  xp: number;
+  level: number;
   createdAt: Date;
 };
 
@@ -29,6 +31,8 @@ export async function getAuthenticatedStudent(): Promise<AuthenticatedStudent | 
         name: true,
         phone: true,
         role: true,
+        xp: true,
+        level: true,
         createdAt: true
       }
     });

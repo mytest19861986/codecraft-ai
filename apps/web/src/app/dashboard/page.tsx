@@ -14,6 +14,10 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  const xpPerLevel = 100;
+  const xpIntoLevel = student.xp % xpPerLevel;
+  const progressPercent = Math.min(100, Math.max(0, xpIntoLevel));
+
   return (
     <section className="mx-auto flex min-h-[calc(100svh-8rem)] w-full max-w-5xl items-center px-5 py-10 sm:px-7 sm:py-14 lg:px-5">
       <div className="glass-panel neon-ring w-full rounded-lg p-5 sm:p-7 lg:p-8">
@@ -26,7 +30,7 @@ export default async function DashboardPage() {
               سلام {student.name}، به داشبورد CodeCraft خوش اومدی
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-8 text-[#a9aec7]">
-              اینجا فضای امن یادگیری توست. فعلا فقط پوسته محافظت شده داشبورد فعال شده و محتوای آموزشی به زودی اضافه میشه.
+              اینجا فضای امن یادگیری توست. امتیاز تجربه ات با فعالیت های ساده رشد می کند و مسیر پیشرفتت را نشان می دهد.
             </p>
           </div>
           <StudentLogoutButton />
@@ -46,18 +50,42 @@ export default async function DashboardPage() {
                   {student.phone}
                 </dd>
               </div>
+              <div>
+                <dt className="font-bold text-[#a9aec7]">Level</dt>
+                <dd className="mt-1 font-black text-white">{student.level}</dd>
+              </div>
+              <div>
+                <dt className="font-bold text-[#a9aec7]">XP</dt>
+                <dd className="mt-1 font-black text-white">{student.xp}</dd>
+              </div>
             </dl>
           </div>
 
           <div className="rounded-lg border border-[#39ff88]/20 bg-[#39ff88]/[0.06] p-5">
-            <p className="text-xs font-black text-[#39ff88]">Coming Soon</p>
-            <h2 className="mt-4 text-xl font-black leading-9 text-white sm:text-2xl">
-              داشبورد آموزشی به زودی
-            </h2>
-            <p className="mt-3 text-sm leading-8 text-[#d9dcf0]">
-              XP، مسیر پیشرفت، تمرین ها و محتوای دوره هنوز پیاده سازی نشده اند. این نسخه فقط ورود امن و نمایش اطلاعات پایه
-              دانش آموز را انجام می دهد.
-            </p>
+            <p className="text-xs font-black text-[#39ff88]">XP Progress</p>
+            <h2 className="mt-4 text-xl font-black leading-9 text-white sm:text-2xl">Level {student.level}</h2>
+            <div className="mt-5 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-sm font-bold text-[#a9aec7]">Total XP</p>
+                <p className="mt-1 text-3xl font-black text-white">{student.xp}</p>
+              </div>
+              <p className="text-sm font-black text-[#d9dcf0]">
+                {xpIntoLevel}/{xpPerLevel}
+              </p>
+            </div>
+            <div
+              className="mt-4 h-3 overflow-hidden rounded-full border border-white/10 bg-black/40"
+              role="progressbar"
+              aria-label="XP progress"
+              aria-valuemin={0}
+              aria-valuemax={xpPerLevel}
+              aria-valuenow={xpIntoLevel}
+            >
+              <div
+                className="h-full rounded-full bg-[#39ff88] shadow-[0_0_18px_rgba(57,255,136,0.55)]"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
           </div>
         </div>
       </div>

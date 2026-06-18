@@ -57,6 +57,8 @@ export async function POST(request: Request) {
         name: result.data.name,
         phone: result.data.phone,
         role: UserRole.STUDENT,
+        xp: 50,
+        level: 1,
         passwordHash
       },
       select: {
@@ -64,6 +66,8 @@ export async function POST(request: Request) {
         name: true,
         phone: true,
         role: true,
+        xp: true,
+        level: true,
         createdAt: true
       }
     });
