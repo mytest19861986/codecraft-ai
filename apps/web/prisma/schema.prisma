@@ -21,6 +21,7 @@ model User {
   level                Int             @default(1)
   lastLoginXpAwardedAt DateTime?
   auditLogs            AdminAuditLog[]
+  lessonProgress       UserLessonProgress[]
 }
 
 model BootcampLead {
@@ -56,20 +57,42 @@ model Course {
 }
 
 model Lesson {
-  id        String   @id @default(cuid())
-  courseId  String
-  title     String
-  slug      String
-  content   String
-  videoUrl  String?
-  order     Int
-  isFree    Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  id          String               @id @default(cuid())
+  slug        String               @unique
+  title       String
+  description String?
+  order       Int
+  xpReward    Int                  @default(20)
+  isActive    Boolean              @default(true)
+  courseId    String?
+  content     String?
+  videoUrl    String?
+  isFree      Boolean              @default(false)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  course      Course?              @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress    UserLessonProgress[]
 
-  @@unique([courseId, slug])
+  @@index([order])
+  @@index([isActive])
   @@index([courseId])
+}
+
+model UserLessonProgress {
+  id          String       @id @default(cuid())
+  userId      String
+  lessonId    String
+  status      LessonStatus @default(LOCKED)
+  completedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson      Lesson       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
+  @@index([status])
 }
 
 model AdminAuditLog {
@@ -116,4 +139,10 @@ enum CourseLevel {
   LEVEL_2
   LEVEL_3
   LEVEL_4
+}
+
+enum LessonStatus {
+  LOCKED
+  UNLOCKED
+  COMPLETED
 }
