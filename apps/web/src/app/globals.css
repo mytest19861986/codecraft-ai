@@ -29,7 +29,7 @@ body {
     radial-gradient(circle at bottom left, rgba(57, 255, 136, 0.14), transparent 26rem),
     linear-gradient(180deg, #0d0e12 0%, #11121a 52%, #0d0e12 100%);
   color: var(--foreground);
-  font-family: Arial, Tahoma, sans-serif;
+  font-family: Vazirmatn, IRANSans, "Segoe UI", Tahoma, Arial, sans-serif;
 }
 
 body::before {
