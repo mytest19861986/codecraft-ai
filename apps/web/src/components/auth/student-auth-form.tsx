@@ -62,6 +62,10 @@ function getErrorMessage(error: ApiError | null) {
     return errorMessages.INTERNAL_SERVER_ERROR;
   }
 
+  if (error.code === "PASSWORD_MISMATCH") {
+    return "رمز عبور و تکرار آن یکسان نیستند.";
+  }
+
   return errorMessages[error.code] ?? errorMessages.INTERNAL_SERVER_ERROR;
 }
 
@@ -99,8 +103,16 @@ export function StudentAuthForm({ mode }: StudentAuthFormProps) {
       phone: String(formData.get("phone") ?? "").trim(),
       password: String(formData.get("password") ?? "")
     };
+    const confirmPassword = String(formData.get("confirmPassword") ?? "");
 
     setApiError(null);
+
+    if (isRegister && payload.password !== confirmPassword) {
+      setApiError({ code: "PASSWORD_MISMATCH" });
+      setState("error");
+      return;
+    }
+
     setState("submitting");
 
     try {
@@ -213,6 +225,24 @@ export function StudentAuthForm({ mode }: StudentAuthFormProps) {
             <span className="mt-1 block text-xs font-bold text-[#ffd6e5]">{getFieldError(apiError, "password")}</span>
           ) : null}
         </label>
+
+        {isRegister ? (
+          <label className="block">
+            <span className="text-sm font-bold text-[#d9dcf0]">تکرار رمز عبور</span>
+            <input
+              className="mt-2 w-full rounded-md border border-white/10 bg-white/5 px-4 py-3 text-left text-white outline-none transition focus:border-[#39ff88]"
+              dir="ltr"
+              name="confirmPassword"
+              type="password"
+              autoComplete="new-password"
+              minLength={8}
+              maxLength={128}
+              required
+              placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+              aria-invalid={apiError?.code === "PASSWORD_MISMATCH"}
+            />
+          </label>
+        ) : null}
       </div>
 
       <button
