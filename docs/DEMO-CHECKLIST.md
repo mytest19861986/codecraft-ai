@@ -4,17 +4,21 @@
 
 - `ADMIN_PASSWORD`
 - `ADMIN_SESSION_SECRET`
+- `STUDENT_SESSION_SECRET`
 - `DATABASE_URL`
 
 ## دستورهای قبل از دمو
 
-از مسیر `apps/web` اجرا شود:
+1. PostgreSQL محلی را اجرا کنید. اگر از Docker Compose پروژه استفاده می‌کنید، مطمئن شوید فایل env انتخاب‌شده شامل `STUDENT_SESSION_SECRET` هم باشد.
+2. از مسیر `apps/web` دستورهای زیر را اجرا کنید.
 
 ```bash
+npx prisma validate
+npx prisma generate
+npx prisma migrate status
 npm run lint
 npm run typecheck
 npm run build
-npx prisma validate
 ```
 
 ## مسیر دمو در مرورگر
@@ -26,7 +30,26 @@ npx prisma validate
 5. صفحه `/admin/login` را باز کنید.
 6. با رمز ادمین وارد شوید.
 7. ثبت شدن لید را در `/admin/leads` بررسی کنید.
-8. خروج را بزنید.
+8. از ناحیه ادمین وارد `/admin/lessons` شوید.
+9. یک درس جدید بسازید.
+10. همان درس را ویرایش کنید و وضعیت فعال/غیرفعال را بررسی کنید.
+11. با یک دانش‌آموز در `/register` ثبت‌نام کنید یا از `/login` وارد شوید.
+12. داشبورد دانش‌آموز را در `/dashboard` باز کنید.
+13. صفحه جزئیات یک درس را باز کنید.
+14. درس را کامل کنید و افزایش XP و باز شدن درس بعدی را بررسی کنید.
+15. خروج را بزنید.
+
+## هشدار مسیر یادگیری
+
+قبل از تغییر ترتیب یا غیرفعال کردن درس‌ها در محیطی که پیشرفت واقعی دانش‌آموز دارد، اثر آن روی باز شدن درس بعدی، مسیر داشبورد، و گزارش پیشرفت را بررسی کنید.
+
+## یادداشت‌های تولید
+
+- برای استقرار Prisma از `prisma migrate deploy` استفاده کنید، نه `db push`.
+- وجود و مقدار امن `STUDENT_SESSION_SECRET` را تایید کنید.
+- وجود و مقدار امن `ADMIN_SESSION_SECRET` را تایید کنید.
+- پورت CodeCraft در تولید باید `3001` بماند.
+- اگر PgBouncer اضافه شد، سازگاری اتصال مستقیم PostgreSQL و تراکنش‌های Serializable را تایید کنید.
 
 ## ساخت لید تست
 

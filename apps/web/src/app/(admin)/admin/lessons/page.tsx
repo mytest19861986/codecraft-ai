@@ -9,7 +9,7 @@ const ui = {
   heading: "مدیریت درس‌ها",
   banner: "MVP مدیریت درس‌ها؛ ساخت، ویرایش و فعال‌سازی بدون حذف",
   countLabel: "تعداد درس‌ها",
-  emptyTitle: "هنوز هیچ درسی ثبت نشده است.",
+  emptyTitle: "هنوز درسی ثبت نشده است.",
   emptyDescription: "برای شروع، یک درس جدید بسازید.",
   columns: {
     order: "ترتیب",
@@ -60,7 +60,7 @@ export default async function AdminLessonsPage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/admin/lessons/new"
-              className="rounded-md bg-[#9b5cff] px-4 py-2 text-sm font-black text-white"
+              className="rounded-md bg-[#9b5cff] px-4 py-2 text-sm font-black text-white hover:bg-[#8750e0]"
             >
               درس جدید
             </Link>
@@ -115,10 +115,10 @@ export default async function AdminLessonsPage() {
                       className={`w-fit rounded-md border px-2 py-1 text-xs font-black ${
                         lesson.isActive
                           ? "border-[#39ff88]/30 bg-[#39ff88]/10 text-[#dfffea]"
-                          : "border-[#ff6b9d]/30 bg-[#ff6b9d]/10 text-[#ffd6e5]"
+                          : "border-[#ffd166]/30 bg-[#ffd166]/10 text-[#fff1c2]"
                       }`}
                     >
-                      {lesson.isActive ? "فعال" : "غیرفعال"}
+                      {lesson.isActive ? "فعال - قابل مشاهده" : "غیرفعال - پنهان"}
                     </span>
                     <span
                       className={`w-fit rounded-md border px-2 py-1 text-xs font-black ${
@@ -137,9 +137,9 @@ export default async function AdminLessonsPage() {
                     </time>
                     <Link
                       href={`/admin/lessons/${encodeURIComponent(lesson.id)}/edit`}
-                      className="w-fit rounded-md border border-white/15 px-3 py-2 text-xs font-black text-white hover:border-[#39ff88] hover:text-[#dfffea]"
+                      className="w-fit rounded-md border border-[#39ff88]/30 bg-[#39ff88]/10 px-3 py-2 text-xs font-black text-[#dfffea] hover:border-[#39ff88]"
                     >
-                      ویرایش
+                      ویرایش درس
                     </Link>
                   </article>
                 );

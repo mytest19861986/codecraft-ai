@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
@@ -85,11 +86,19 @@ export default async function AdminLeadsPage() {
           <span className="w-fit rounded-md border border-[#39ff88]/30 bg-[#39ff88]/10 px-3 py-2 text-xs font-bold text-[#dfffea]">
             {ui.banner}
           </span>
-          <form action="/admin/session" method="post">
-            <button className="rounded-md border border-white/15 px-4 py-2 text-sm font-bold text-white hover:border-[#ff6b9d] hover:text-[#ffd6e5]" type="submit">
-              خروج
-            </button>
-          </form>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/admin/lessons"
+              className="rounded-md border border-[#39ff88]/30 bg-[#39ff88]/10 px-4 py-2 text-sm font-black text-[#dfffea] hover:border-[#39ff88]"
+            >
+              مدیریت درس‌ها
+            </Link>
+            <form action="/admin/session" method="post">
+              <button className="rounded-md border border-white/15 px-4 py-2 text-sm font-bold text-white hover:border-[#ff6b9d] hover:text-[#ffd6e5]" type="submit">
+                خروج
+              </button>
+            </form>
+          </div>
         </div>
       </div>
 
