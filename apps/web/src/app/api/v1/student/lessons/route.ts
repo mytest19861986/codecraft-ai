@@ -63,6 +63,8 @@ export async function GET(request: NextRequest) {
         slug: lesson.slug,
         title: lesson.title,
         description: lesson.description,
+        contentPreview: lesson.contentPreview,
+        hasContent: lesson.hasContent,
         order: lesson.order,
         xpReward: lesson.xpReward,
         status: lesson.status,

@@ -6,11 +6,23 @@ export type StudentLessonPathItem = {
   slug: string;
   title: string;
   description: string | null;
+  contentPreview: string | null;
+  hasContent: boolean;
   order: number;
   xpReward: number;
   status: LessonStatus;
   completedAt: Date | null;
 };
+
+function createContentPreview(content: string | null): string | null {
+  const normalizedContent = content?.replace(/\s+/g, " ").trim();
+
+  if (!normalizedContent) {
+    return null;
+  }
+
+  return normalizedContent.length > 120 ? `${normalizedContent.slice(0, 120)}...` : normalizedContent;
+}
 
 export async function getStudentLessonPath(userId: string): Promise<StudentLessonPathItem[]> {
   const lessons = await prisma.lesson.findMany({
@@ -25,6 +37,7 @@ export async function getStudentLessonPath(userId: string): Promise<StudentLesso
       slug: true,
       title: true,
       description: true,
+      content: true,
       order: true,
       xpReward: true
     }
@@ -55,7 +68,14 @@ export async function getStudentLessonPath(userId: string): Promise<StudentLesso
     const existingProgress = progressByLessonId.get(lesson.id);
 
     return {
-      ...lesson,
+      id: lesson.id,
+      slug: lesson.slug,
+      title: lesson.title,
+      description: lesson.description,
+      contentPreview: createContentPreview(lesson.content),
+      hasContent: Boolean(lesson.content?.trim()),
+      order: lesson.order,
+      xpReward: lesson.xpReward,
       status: existingProgress?.status ?? (!hasAnyProgress && index === 0 ? LessonStatus.UNLOCKED : LessonStatus.LOCKED),
       completedAt: existingProgress?.completedAt ?? null
     };
