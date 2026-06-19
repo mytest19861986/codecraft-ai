@@ -14,6 +14,11 @@ export type StudentLessonPathItem = {
   completedAt: Date | null;
 };
 
+export type StudentLessonDetail = StudentLessonPathItem & {
+  content: string | null;
+  videoUrl: string | null;
+};
+
 function createContentPreview(content: string | null): string | null {
   const normalizedContent = content?.replace(/\s+/g, " ").trim();
 
@@ -80,4 +85,38 @@ export async function getStudentLessonPath(userId: string): Promise<StudentLesso
       completedAt: existingProgress?.completedAt ?? null
     };
   });
+}
+
+export async function getStudentLessonDetail(userId: string, slug: string): Promise<StudentLessonDetail | null> {
+  const lessonPath = await getStudentLessonPath(userId);
+  const lessonPathItem = lessonPath.find((lesson) => lesson.slug === slug);
+
+  if (!lessonPathItem) {
+    return null;
+  }
+
+  const lesson = await prisma.lesson.findFirst({
+    where: {
+      slug,
+      isActive: true
+    },
+    select: {
+      content: true,
+      videoUrl: true
+    }
+  });
+
+  if (!lesson) {
+    return null;
+  }
+
+  const isAccessible = lessonPathItem.status !== LessonStatus.LOCKED;
+
+  return {
+    ...lessonPathItem,
+    contentPreview: isAccessible ? lessonPathItem.contentPreview : null,
+    hasContent: isAccessible && lessonPathItem.hasContent,
+    content: isAccessible && lesson.content?.trim() ? lesson.content : null,
+    videoUrl: isAccessible && lesson.videoUrl?.trim() ? lesson.videoUrl : null
+  };
 }

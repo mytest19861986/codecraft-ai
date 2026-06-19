@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition, type ReactNode } from "react";
 import { LessonStatus } from "@/generated/prisma/enums";
 
@@ -353,13 +354,22 @@ export function StudentDashboardPanel({ student, lessons, logoutButton }: Studen
                   ) : (
                     <p className="mt-2 text-sm leading-7 text-[#a9aec7]">محتوای کامل این درس به‌زودی اضافه می‌شود.</p>
                   )}
-                  <button
+                  {isLocked ? (
+                    <button
                     type="button"
                     disabled
                     className="mt-4 w-full cursor-not-allowed rounded-md border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-black text-[#a9aec7]"
                   >
                     مشاهده محتوای درس
-                  </button>
+                    </button>
+                  ) : (
+                    <Link
+                      href={`/dashboard/lessons/${encodeURIComponent(lesson.slug)}`}
+                      className="mt-4 flex w-full items-center justify-center rounded-md border border-[#ff3df2]/35 bg-[#ff3df2]/10 px-4 py-3 text-sm font-black text-[#ffd7fd] transition hover:border-[#ff3df2] hover:bg-[#ff3df2]/20"
+                    >
+                      مشاهده درس
+                    </Link>
+                  )}
                 </div>
 
                 {completedDate ? (
