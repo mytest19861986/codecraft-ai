@@ -9,6 +9,8 @@ Do not commit real `.env` files, passwords, session secrets, database dumps, or 
 ## Assumptions
 
 - The app runs from `apps/web`.
+- The live PM2 app name is `codecraft-ai`.
+- The expected live server path is `/var/www/codecraft-ai`.
 - Docker and the Docker Compose plugin are installed on the VPS.
 - Nginx and Certbot run on the VPS host, outside Docker.
 - DNS for `codecraftai.ir` already points to the VPS before requesting SSL.
@@ -25,6 +27,8 @@ Do not commit real `.env` files, passwords, session secrets, database dumps, or 
 - `ADMIN_SESSION_SECRET`: Long random secret used to sign admin sessions.
 - `STUDENT_SESSION_SECRET`: Long random secret used to sign student sessions. Use a different value from `ADMIN_SESSION_SECRET`.
 - `NEXT_PUBLIC_SITE_URL`: Public origin, for example `https://codecraftai.ir`.
+- `NODE_ENV`: Set to `production` for PM2 or other host-level process managers.
+- `PORT`: Set to `3001` for PM2 or other host-level process managers. Never use `3000` for CodeCraft on the live VPS.
 - `POSTGRES_PORT`: Optional host port for local administrative access to Postgres. Keep it bound to `127.0.0.1` unless there is a specific operations reason to expose it.
 
 Optional port binding variables:
@@ -74,11 +78,27 @@ docker compose --env-file infra/.env.production -f infra/docker-compose.yml ps
 
 ## 4. Apply The Prisma Schema
 
-This project currently uses Prisma `db push` for schema deployment. When migrations are introduced, replace this step with `npx prisma migrate deploy`.
+Use Prisma migrations for production schema deployment. Do not use `prisma db push` in production.
+
+Before deploying the lesson progress migration to any production database that may already contain lessons, check for duplicate lesson slugs:
+
+```sql
+SELECT slug, COUNT(*)
+FROM "Lesson"
+GROUP BY slug
+HAVING COUNT(*) > 1;
+```
+
+Resolve any returned rows before running migrations. The `Lesson.slug` column is unique in the current schema.
+
+If PgBouncer is introduced later, confirm that Prisma migrations use a direct PostgreSQL connection or that the pooling mode is compatible with migration transactions and the app's Serializable transaction usage.
 
 ```bash
-docker compose --env-file infra/.env.production -f infra/docker-compose.yml run --rm web npx prisma db push
+docker compose --env-file infra/.env.production -f infra/docker-compose.yml run --rm web npx prisma generate
+docker compose --env-file infra/.env.production -f infra/docker-compose.yml run --rm web npx prisma migrate deploy
 ```
+
+Seed lessons only intentionally. Do not blindly re-run lesson seed scripts against production content, and do not reorder or deactivate lessons that have real student progress without checking the impact on unlocks, dashboard ordering, and progress reporting.
 
 ## 5. Start The Web App
 
@@ -91,7 +111,13 @@ The default Compose settings publish the web app on `127.0.0.1:3000`, which is i
 For a PM2 deployment on the live VPS, start CodeCraft with the same host port:
 
 ```bash
-PORT=3001 npm run start
+NODE_ENV=production PORT=3001 pm2 start npm --name codecraft-ai -- run start
+```
+
+If the PM2 app already exists, restart it with the updated environment instead of creating a duplicate process:
+
+```bash
+NODE_ENV=production PORT=3001 pm2 restart codecraft-ai --update-env
 ```
 
 ## 6. Configure Nginx Reverse Proxy
@@ -160,9 +186,63 @@ Also submit a test lead through `/bootcamp` and confirm it appears in `/admin/le
 
 For student auth, follow `docs/AUTH-SMOKE-TEST.md` after deploying or restarting the app.
 
+Production smoke checklist:
+
+- Public home page loads.
+- `/login` loads.
+- `/register` loads.
+- Admin login succeeds with the configured production admin password.
+- `/admin/leads` loads after admin login.
+- `/admin/lessons` loads after admin login.
+- Create/edit an admin lesson only on staging/demo, or in production only when the content change is intentional and approved.
+- Student registration and login work.
+- `/dashboard` loads for the signed-in student.
+- `/dashboard/lessons/[slug]` loads for an unlocked lesson.
+- Completing a lesson increases XP once.
+- Completing a lesson unlocks the next lesson.
+- Locked lesson content does not leak.
+- Inactive lessons do not show in the student learning path.
+- `/api/v1/health` returns a healthy JSON response.
+
+## PM2 Server Command Plan
+
+Do not run this plan until you are intentionally deploying on the production server. These commands assume the repo already exists at `/var/www/codecraft-ai`, the production `.env` is already present on the server, and secrets are never printed to the terminal or committed to Git.
+
+```bash
+cd /var/www/codecraft-ai
+git fetch origin
+git checkout master
+git pull origin master
+cd apps/web
+npm ci
+npx prisma validate
+npx prisma generate
+npx prisma migrate deploy
+npm run build
+NODE_ENV=production PORT=3001 pm2 restart codecraft-ai --update-env
+```
+
+If `codecraft-ai` does not exist in PM2 yet, start it once from `apps/web`:
+
+```bash
+NODE_ENV=production PORT=3001 pm2 start npm --name codecraft-ai -- run start
+pm2 save
+```
+
+Health checks after PM2 restart/start:
+
+```bash
+pm2 status codecraft-ai
+curl -fsS http://127.0.0.1:3001/api/v1/health
+curl -fsS https://codecraftai.ir/api/v1/health
+```
+
+Avoid destructive commands. If a future deployment requires clearing caches, deleting files, or changing database content, write a separate reviewed runbook first and back up the database before touching production data.
+
 ## Operations Notes
 
 - Restart after env changes with `docker compose --env-file infra/.env.production -f infra/docker-compose.yml up -d --build web`.
 - View logs with `docker compose --env-file infra/.env.production -f infra/docker-compose.yml logs -f web`.
 - Back up the Postgres named volume before destructive database operations.
 - Keep `POSTGRES_BIND_ADDRESS=127.0.0.1`; do not expose Postgres publicly.
+- Keep CodeCraft on port `3001` on the live VPS. Hami Card owns port `3000`.
