@@ -9,18 +9,18 @@ export function HeroSection() {
             آکادمی کدنویسی، AI و بازی‌سازی
           </p>
           <h1 className="text-3xl font-black leading-[1.35] text-white sm:text-5xl sm:leading-snug lg:text-6xl">
-            کدهای سنتی رو دفن کن؛
-            <span className="mt-2 block text-[#39ff88]">بازی و هوش مصنوعی خودت رو بساز!</span>
+            از صفر وارد بازی کدنویسی شو؛
+            <span className="mt-2 block text-[#39ff88]">با پروژه، XP و AI یاد بگیر.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-9 text-[#d9dcf0] sm:mt-7 sm:text-lg">
-            از صفر مطلق تا خروجی‌های واقعی؛ بدون حفظ کردن فرمول‌های خشک مدرسه‌ای. توی آکادمی کدکرافت، مهندسی پرامپت و تفکر الگوریتمی رو به روش گیمینگ و پروژه‌محور یاد می‌گیری.
+            کدکرافت برای نوجوان‌هایی ساخته شده که دوست دارند چیزهای قابل نمایش بسازند: منطق برنامه‌نویسی، تفکر الگوریتمی و استفاده مسئولانه از ابزارهای AI، با حال‌وهوای گیمینگ و مسیر مرحله‌ای.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap">
             <Link
               href="/bootcamp"
               className="inline-flex items-center justify-center rounded-md bg-[#22c55e] px-6 py-4 text-sm font-black text-black shadow-[0_0_16px_rgba(34,197,94,0.5)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#39ff88] hover:shadow-[0_0_26px_rgba(57,255,136,0.7)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff88] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d0e12]"
             >
-              شروع کمپ ۳ روزه رایگان (ظرفیت محدود) 🚀
+              شروع کمپ ۳ روزه رایگان
             </Link>
             <Link
               href="/free-lesson"
@@ -29,7 +29,7 @@ export function HeroSection() {
               دیدن درس رایگان
             </Link>
           </div>
-          <p className="mt-4 text-sm font-bold text-[#a9aec7]">بدون نیاز به پیش‌زمینه | مسیر شروع پس از ثبت‌نام اطلاع‌رسانی می‌شود</p>
+          <p className="mt-4 text-sm font-bold text-[#a9aec7]">بدون نیاز به پیش‌زمینه | مناسب گفت‌وگوی والدین و نوجوان | مسیر شروع پس از ثبت اولیه هماهنگ می‌شود</p>
         </div>
 
         <div className="rounded-lg border border-purple-500/35 bg-[#0d0d13] p-3 shadow-[0_0_34px_rgba(168,85,247,0.18)] sm:p-4">

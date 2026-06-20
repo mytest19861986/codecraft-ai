@@ -32,7 +32,7 @@ const videos: MiniCourseVideo[] = [
     isLocked: true,
     videoUrl: "/videos/codecraft-session-2.mp4",
     coverUrl: "/images/video-cover-session-2.jpg",
-    description: "بعد از ارسال تمرین جلسه اول در ربات تلگرام باز می‌شود."
+    description: "در نسخه فعلی قفل است و در فازهای بعدی با مسیر تمرین رسمی باز می‌شود."
   },
   {
     id: "session-3",
@@ -69,9 +69,9 @@ export function MiniCourseVideoGrid() {
     <section className="mx-auto w-full max-w-6xl px-5 py-14 sm:py-20" dir="rtl">
       <div className="rounded-lg border border-purple-500/25 bg-[#0d0d13]/92 p-5 shadow-[0_0_44px_rgba(168,85,247,0.13)] sm:p-7 lg:p-8">
         <SectionHeading
-          eyebrow="Free Mini Course"
+          eyebrow="مینی‌دوره رایگان"
           title="مینی‌دوره رایگان کدکرافت"
-          subtitle="جلسه اول را همین حالا ببین؛ جلسه‌های بعدی با ارسال تمرین در ربات تلگرام باز می‌شوند."
+          subtitle="جلسه اول برای نمایش سبک یادگیری آماده است؛ جلسه‌های بعدی در این MVP به‌صورت قفل/به‌زودی نمایش داده می‌شوند."
         />
 
         <div className="mt-9 grid grid-cols-1 gap-5 md:grid-cols-3">
@@ -145,7 +145,7 @@ export function MiniCourseVideoGrid() {
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[#08070d]/72 px-4 text-center backdrop-blur-md sm:gap-4 sm:px-5">
                       <LockIcon />
                       <p className="max-w-[16rem] text-xs font-black leading-6 text-purple-100 sm:max-w-none sm:text-sm sm:leading-7">
-                        قفل - باز شدن با ارسال تمرین در ربات تلگرام
+                        قفل - باز شدن در فاز بعدی مسیر تمرین
                       </p>
                     </div>
                   ) : null}

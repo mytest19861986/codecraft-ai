@@ -157,7 +157,7 @@ export function BootcampLeadForm() {
         type="submit"
         aria-busy={state === "submitting"}
       >
-        {state === "submitting" ? "در حال ثبت اطلاعات..." : "شروع کمپ ۳ روزه رایگان (ظرفیت محدود) 🚀"}
+        {state === "submitting" ? "در حال ثبت اطلاعات..." : "ثبت علاقه‌مندی کمپ ۳ روزه رایگان"}
       </button>
 
       {state === "success" ? (

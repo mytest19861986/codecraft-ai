@@ -47,7 +47,7 @@ export default async function EditLessonPage({ params, searchParams }: EditLesso
   return (
     <section dir="rtl" className="mx-auto w-full max-w-5xl px-5 py-12 sm:py-16">
       <div>
-        <p className="text-sm font-bold text-[#39ff88]">Admin Lessons</p>
+        <p className="text-sm font-bold text-[#39ff88]">مدیریت درس‌ها</p>
         <h1 className="mt-2 text-3xl font-black text-white">ویرایش درس</h1>
         <p dir="ltr" className="mt-3 max-w-2xl text-left font-mono text-sm text-[#a9aec7]">
           {lesson.slug}

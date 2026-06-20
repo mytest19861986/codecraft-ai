@@ -5,7 +5,7 @@ import { getAuthenticatedStudent } from "@/lib/security/student-auth";
 import { getStudentLessonPath } from "@/lib/student/lessons";
 
 export const metadata = {
-  title: "ط¯ط§ط´ط¨ظˆط±ط¯ ط¯ط§ظ†ط´â€Œط¢ظ…ظˆط²",
+  title: "داشبورد دانش‌آموز",
   robots: { index: false, follow: false }
 };
 

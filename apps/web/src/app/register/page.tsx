@@ -14,7 +14,7 @@ export default function RegisterPage() {
           پروفایلت رو بساز و وارد مسیر شو.
         </h2>
         <p className="mt-4 text-sm leading-8 text-[#d9dcf0]">
-          ثبت نام فقط شروع ماجراست. بعد از ساخت اکانت، با همین شماره و رمز وارد داشبورد میشی.
+          ثبت‌نام فقط شروع ماجراست. بعد از ساخت اکانت، با همین شماره و رمز وارد داشبورد می‌شی و مرحله‌های فعال رو می‌بینی.
         </p>
         <div className="mt-6 rounded-md border border-purple-500/20 bg-black/30 p-4 font-mono text-xs leading-6 text-left text-[#e6e8f8]" dir="ltr">
           <pre className="whitespace-pre-wrap">{`player.create({

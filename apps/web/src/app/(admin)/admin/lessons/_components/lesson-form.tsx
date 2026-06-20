@@ -34,7 +34,7 @@ export function LessonForm({ action, lesson, errorMessage, savedMessage, submitL
             defaultValue={lesson?.slug ?? ""}
             placeholder="javascript-variables"
           />
-          <p className="mt-2 text-xs font-semibold text-[#aeb4d8]">مثال: coding-adventure-start</p>
+          <p className="mt-2 text-xs font-semibold text-[#aeb4d8]">مثال برای دمو: coding-adventure-start</p>
         </label>
 
         <label className="block">
@@ -49,12 +49,22 @@ export function LessonForm({ action, lesson, errorMessage, savedMessage, submitL
 
         <label className="block md:col-span-2">
           <span className="text-sm font-bold text-[#d9dcf0]">توضیح کوتاه</span>
-          <textarea className={textAreaClass} name="description" defaultValue={lesson?.description ?? ""} />
+          <textarea
+            className={textAreaClass}
+            name="description"
+            defaultValue={lesson?.description ?? ""}
+            placeholder="مثلا: در این مرحله یاد می‌گیری چطور یک مسئله را به چند ماموریت کوچک تبدیل کنی."
+          />
         </label>
 
         <label className="block md:col-span-2">
           <span className="text-sm font-bold text-[#d9dcf0]">محتوا</span>
-          <textarea className={`${textAreaClass} min-h-56`} name="content" defaultValue={lesson?.content ?? ""} />
+          <textarea
+            className={`${textAreaClass} min-h-56`}
+            name="content"
+            defaultValue={lesson?.content ?? ""}
+            placeholder="هدف مرحله، ماموریت کوتاه، و یک تمرین قابل انجام را بنویسید تا دانش‌آموز در دمو فقط با متن خالی روبه‌رو نشود."
+          />
         </label>
 
         <label className="block md:col-span-2">

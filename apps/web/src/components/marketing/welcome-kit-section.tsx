@@ -5,9 +5,9 @@ export function WelcomeKitSection() {
     <section className="mx-auto w-full max-w-6xl px-5 py-16 sm:py-24">
       <div className="glass-panel rounded-lg p-6 sm:p-8 lg:p-10">
         <SectionHeading
-          eyebrow="Welcome Kit"
-          title="کیت شروع برای ثبت‌نام قطعی Level 1"
-          subtitle="پس از تایید نهایی و ثبت‌نام قطعی در Level 1، کیت خوشامدگویی می‌تواند به‌عنوان بخشی از تجربه شروع دوره ارائه شود. جزئیات نهایی بسته، زمان ارسال، و موجودی در مرحله بعد رسمی می‌شود."
+          eyebrow="راهنمای شروع"
+          title="شروع منظم، نه شروع هیجانی و مبهم"
+          subtitle="بعد از هماهنگی اولیه، خانواده و دانش‌آموز باید بدانند مسیر از کجا شروع می‌شود، چه چیزی تمرین می‌شود و پیشرفت چطور دیده می‌شود. این بخش درباره راهنمای دیجیتال شروع است، نه بسته فیزیکی یا وعده ارسال."
         />
         <div className="mt-10 grid gap-4 sm:grid-cols-3 sm:gap-6">
           {["چک‌لیست شروع", "نقشه XP", "راهنمای والدین"].map((item) => (

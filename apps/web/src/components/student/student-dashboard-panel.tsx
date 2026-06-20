@@ -98,6 +98,7 @@ export function StudentDashboardPanel({ student, lessons, logoutButton }: Studen
   const xpIntoLevel = currentStudent.xp % xpPerLevel;
   const levelProgressPercent = Math.min(100, Math.max(0, xpIntoLevel));
   const totalLessons = lessonPath.length;
+  const hasLessons = totalLessons > 0;
   const completedLessons = lessonPath.filter((lesson) => lesson.status === LessonStatus.COMPLETED).length;
   const lessonProgressPercent = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
   const nextLesson = lessonPath.find((lesson) => lesson.status === LessonStatus.UNLOCKED) ?? null;
@@ -183,13 +184,13 @@ export function StudentDashboardPanel({ student, lessons, logoutButton }: Studen
       <div className="flex flex-col gap-4 border-b border-white/10 pb-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="inline-flex rounded-md border border-[#39ff88]/30 bg-[#39ff88]/10 px-3 py-2 text-xs font-black text-[#39ff88]">
-            Student Dashboard
+            داشبورد دانش‌آموز
           </p>
           <h1 className="mt-5 text-2xl font-black leading-10 text-white sm:text-3xl">
             سلام {currentStudent.name}، آماده‌ای مسیر کدنویسی‌ات را جلو ببری؟
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-8 text-[#a9aec7]">
-            اینجا نقشه یادگیری توست: مرحله‌ها را باز کن، XP بگیر و هر بار یک قدم حرفه‌ای‌تر شو.
+            اینجا نقشه یادگیری توست: مرحله‌ها را باز کن، XP بگیر و هر بار یک قدم جلوتر برو.
           </p>
         </div>
         {logoutButton}
@@ -222,7 +223,7 @@ export function StudentDashboardPanel({ student, lessons, logoutButton }: Studen
               </p>
             </div>
             <div className="rounded-md border border-white/10 bg-black/25 p-4">
-              <p className="text-xs font-bold text-[#a9aec7]">Level</p>
+              <p className="text-xs font-bold text-[#a9aec7]">لول</p>
               <p className="mt-2 text-2xl font-black text-white">{currentStudent.level}</p>
             </div>
             <div className="rounded-md border border-white/10 bg-black/25 p-4">
@@ -241,7 +242,7 @@ export function StudentDashboardPanel({ student, lessons, logoutButton }: Studen
           <div
             className="mt-5 h-3 overflow-hidden rounded-full border border-white/10 bg-black/40"
             role="progressbar"
-            aria-label="Lesson progress"
+            aria-label="پیشرفت درس‌ها"
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={lessonProgressPercent}
@@ -255,7 +256,14 @@ export function StudentDashboardPanel({ student, lessons, logoutButton }: Studen
 
         <section className="rounded-lg border border-[#ff3df2]/25 bg-[#ff3df2]/[0.055] p-5">
           <p className="text-xs font-black text-[#ff8cf8]">مرحله بعدی تو</p>
-          {nextLesson ? (
+          {!hasLessons ? (
+            <div className="mt-4 rounded-md border border-white/10 bg-black/25 p-4">
+              <h2 className="text-xl font-black leading-9 text-white">هنوز درس فعالی برای نمایش وجود ندارد</h2>
+              <p className="mt-2 text-sm leading-8 text-[#d9dcf0]">
+                در دمو، از بخش ادمین یک درس فعال بسازید یا درس‌های نمونه را آماده کنید تا مسیر XP نمایش داده شود.
+              </p>
+            </div>
+          ) : nextLesson ? (
             <>
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
@@ -291,9 +299,9 @@ export function StudentDashboardPanel({ student, lessons, logoutButton }: Studen
           )}
 
           <div className="mt-5 border-t border-white/10 pt-5">
-            <p className="text-xs font-black text-[#39ff88]">XP Progress</p>
+            <p className="text-xs font-black text-[#39ff88]">پیشرفت XP</p>
             <div className="mt-3 flex items-end justify-between gap-4">
-              <p className="text-sm font-bold text-[#a9aec7]">Level {currentStudent.level}</p>
+              <p className="text-sm font-bold text-[#a9aec7]">لول {currentStudent.level}</p>
               <p className="text-sm font-black text-[#d9dcf0]">
                 {xpIntoLevel}/{xpPerLevel}
               </p>
@@ -301,7 +309,7 @@ export function StudentDashboardPanel({ student, lessons, logoutButton }: Studen
             <div
               className="mt-3 h-3 overflow-hidden rounded-full border border-white/10 bg-black/40"
               role="progressbar"
-              aria-label="XP progress"
+              aria-label="پیشرفت XP"
               aria-valuemin={0}
               aria-valuemax={xpPerLevel}
               aria-valuenow={xpIntoLevel}
@@ -326,8 +334,9 @@ export function StudentDashboardPanel({ student, lessons, logoutButton }: Studen
           </p>
         </div>
 
-        <div className="mt-5 grid gap-4 lg:grid-cols-3">
-          {lessonPath.map((lesson) => {
+        {hasLessons ? (
+          <div className="mt-5 grid gap-4 lg:grid-cols-3">
+            {lessonPath.map((lesson) => {
             const isLocked = lesson.status === LessonStatus.LOCKED;
             const isCompleted = lesson.status === LessonStatus.COMPLETED;
             const completedDate = formatPersianDate(lesson.completedAt);
@@ -394,10 +403,15 @@ export function StudentDashboardPanel({ student, lessons, logoutButton }: Studen
                     قفل
                   </p>
                 )}
-              </article>
-            );
-          })}
-        </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="mt-5 rounded-lg border border-white/10 bg-black/25 p-5 text-sm font-bold leading-8 text-[#d9dcf0]">
+            مسیر درس‌ها بعد از فعال شدن اولین درس اینجا نمایش داده می‌شود.
+          </div>
+        )}
       </section>
     </div>
   );

@@ -9,10 +9,10 @@ import { ADMIN_SESSION_COOKIE_NAME, verifyAdminSessionCookie } from "@/lib/secur
 const ui = {
   pageTitle: "مدیریت درس‌ها",
   heading: "مدیریت درس‌ها",
-  banner: "MVP مدیریت درس‌ها؛ ساخت، ویرایش، فعال‌سازی و حذف امن",
+  banner: "پنل آماده دمو؛ ساخت، ویرایش، فعال‌سازی و مرتب‌سازی درس‌ها",
   countLabel: "تعداد درس‌ها",
   emptyTitle: "هنوز درسی ثبت نشده است.",
-  emptyDescription: "برای شروع، یک درس جدید بسازید.",
+  emptyDescription: "برای دمو، یک درس کوتاه با عنوان روشن، توضیح ساده و پاداش XP بسازید.",
   columns: {
     order: "ترتیب",
     title: "عنوان",
@@ -62,7 +62,7 @@ export default async function AdminLessonsPage({ searchParams }: AdminLessonsPag
     <section dir="rtl" className="mx-auto w-full max-w-7xl px-5 py-12 sm:py-16">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-bold text-[#39ff88]">Admin Lessons</p>
+          <p className="text-sm font-bold text-[#39ff88]">مدیریت درس‌ها</p>
           <h1 className="mt-2 text-3xl font-black text-white">{ui.heading}</h1>
           <p className="mt-3 text-sm font-bold text-[#d9dcf0]">
             {ui.countLabel}: <span className="text-[#39ff88]">{lessons.length.toLocaleString("fa-IR")}</span>

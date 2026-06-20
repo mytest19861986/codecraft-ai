@@ -4,13 +4,13 @@ const levels = [
   {
     title: "LEVEL 01 // تفکر الگوریتمی و وب مدرن (۱۰۰ XP)",
     description:
-      "درک منطق برنامه‌نویسی و اصول فرانت‌اِند. یاد می‌گیری چطور ظاهر یک سایت ریسپانسیو و مدرن رو با ابزارهای کمکی AI طراحی کنی.",
-    capstone: "طراحی و دیپلوای سایت هوشمند شخصی و لندینگ‌پیج گیمینگ."
+      "درک منطق برنامه‌نویسی و اصول فرانت‌اِند. یاد می‌گیری چطور ظاهر یک سایت ساده و ریسپانسیو رو مرحله‌به‌مرحله طراحی کنی و از AI برای ایده‌پردازی کمک بگیری.",
+    capstone: "ساخت نمونه سایت شخصی یا لندینگ‌پیج گیمینگ برای ارائه در کلاس."
   },
   {
     title: "LEVEL 02 // مهندسی منطق با پایتون (۲۵۰ XP)",
     description:
-      "ورود به دنیای شیء‌گرایی و پردازش داده‌ها. کدهای پایتون رو یاد می‌گیری و یاد می‌گیری چطور مغز ابزارهای دیجیتال رو فرماندهی کنی.",
+      "ورود به منطق پایتون، تابع‌ها و داده‌ها. تمرکز روی حل مسئله است؛ نه حفظ کردن دستورها.",
     capstone: "طراحی نمونه آموزشی دستیار هوشمند با تمرکز روی منطق، پرامپت و تجربه کاربری؛ اتصال API در فازهای بعدی بررسی می‌شود."
   },
   {
@@ -22,8 +22,8 @@ const levels = [
   {
     title: "LEVEL 04 // شتاب‌دهی بازی‌سازی تجاری (۱۰۰۰ XP)",
     description:
-      "توسعه بازی‌های دو بعدی پیشرفته، بهینه‌سازی کدهای سنگین و پکیج کردن نهایی محصول برای مارکت‌های بزرگ.",
-    capstone: "انتشار یک بازی پلتفرمر چالش‌برانگیز در کافه‌بازار یا مایکت."
+      "توسعه بازی‌های دو بعدی، بهینه‌سازی مرحله‌ای و آماده‌سازی یک نمونه قابل تست برای دریافت بازخورد.",
+    capstone: "ساخت نسخه نمایشی یک بازی پلتفرمر و بررسی مسیر انتشار به‌عنوان موضوع آموزشی، نه تعهد انتشار."
   }
 ];
 
@@ -33,9 +33,9 @@ export function LevelsSection() {
   return (
     <section className="mx-auto w-full max-w-6xl px-5 py-14 sm:py-20">
       <SectionHeading
-        eyebrow="Level Map"
+        eyebrow="نقشه لول‌آپ"
         title="مسیر لول‌آپ و نقشه راه مهارتی"
-        subtitle="تا غول مرحله قبل رو شکست ندی، ماتریکس بعدی برات باز نمیشه!"
+        subtitle="هر مرحله یک ماموریت روشن دارد: یادگیری، تمرین، خروجی کوچک و XP."
       />
       <div className="mt-9 grid gap-5 md:grid-cols-2">
         {levels.map((level, index) => (
@@ -54,7 +54,7 @@ export function LevelsSection() {
             <h3 className="mt-5 text-xl font-black leading-8 text-white transition-colors duration-300 group-hover:text-[#39ff88] sm:leading-9">{level.title}</h3>
             <p className="mt-4 text-sm leading-8 text-[#d9dcf0]">{level.description}</p>
             <div className="mt-6 rounded-md border border-[#9b5cff]/40 bg-[#9b5cff]/10 p-4 shadow-[inset_0_0_24px_rgba(155,92,255,.1)]">
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#c9adff]">Capstone</p>
+              <p className="text-xs font-black text-[#c9adff]">پروژه پایانی مرحله</p>
               <p className="mt-2 text-sm leading-8 text-[#eef0ff]">{level.capstone}</p>
             </div>
           </article>

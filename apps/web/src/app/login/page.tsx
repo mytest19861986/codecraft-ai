@@ -17,7 +17,7 @@ export default function LoginPage() {
           ادامه بده، مرحله بعدی منتظرته.
         </h2>
         <p className="mt-4 text-sm leading-8 text-[#d9dcf0]">
-          اینجا مسیر یادگیریت مثل یک بازی جلو میره: پروژه، تمرین، بازخورد و ساختن چیزهایی که واقعا کار می کنن.
+          اینجا مسیر یادگیریت مثل یک بازی جلو می‌ره: درس‌های مرحله‌ای، تمرین، XP و ساختن نمونه‌هایی که می‌تونی نشان بدهی.
         </p>
         <div className="mt-6 grid grid-cols-3 gap-3 text-center">
           {["AI", "Game", "Code"].map((item) => (

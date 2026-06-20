@@ -27,10 +27,10 @@ export default async function NewLessonPage({ searchParams }: NewLessonPageProps
   return (
     <section dir="rtl" className="mx-auto w-full max-w-5xl px-5 py-12 sm:py-16">
       <div>
-        <p className="text-sm font-bold text-[#39ff88]">Admin Lessons</p>
+        <p className="text-sm font-bold text-[#39ff88]">مدیریت درس‌ها</p>
         <h1 className="mt-2 text-3xl font-black text-white">ساخت درس جدید</h1>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-[#a9aec7]">
-          درس فعال در مسیر یادگیری دانش‌آموزها نمایش داده می‌شود. ترتیب درس باید یکتا و مثبت باشد.
+          برای دمو، درس را کوتاه و مرحله‌ای بنویسید: یک هدف روشن، یک تمرین کوچک، و پاداش XP قابل توضیح. درس فعال در مسیر یادگیری دانش‌آموزها نمایش داده می‌شود.
         </p>
       </div>
       <LessonForm action={createLessonAction} errorMessage={params?.error ?? null} submitLabel="ساخت درس" />
