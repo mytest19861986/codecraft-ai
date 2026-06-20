@@ -26,6 +26,13 @@ export type AdminLessonResult =
     }
   | AdminLessonFailure;
 
+export type AdminLessonDeleteResult =
+  | {
+      ok: true;
+      lesson: Pick<AdminLesson, "id" | "slug" | "title" | "order">;
+    }
+  | AdminLessonFailure;
+
 export type AdminLesson = {
   id: string;
   slug: string;
@@ -251,6 +258,66 @@ export async function updateAdminLesson(id: string, input: AdminLessonInput): Pr
       ok: true,
       lesson
     };
+  } catch (error) {
+    return writeLessonError(error);
+  }
+}
+
+export async function deleteAdminLesson(id: string): Promise<AdminLessonDeleteResult> {
+  try {
+    return await prisma.$transaction(
+      async (tx) => {
+        const lesson = await tx.lesson.findUnique({
+          where: {
+            id
+          },
+          select: {
+            id: true,
+            slug: true,
+            title: true,
+            order: true
+          }
+        });
+
+        if (!lesson) {
+          return {
+            ok: false,
+            status: 404,
+            code: "LESSON_NOT_FOUND",
+            message: "درس پیدا نشد."
+          };
+        }
+
+        const progressCount = await tx.userLessonProgress.count({
+          where: {
+            lessonId: id
+          }
+        });
+
+        if (progressCount > 0) {
+          return {
+            ok: false,
+            status: 409,
+            code: "LESSON_HAS_PROGRESS",
+            message: "این درس سابقه یادگیری دانش‌آموز دارد و حذف مستقیم آن مجاز نیست. برای حفظ تاریخچه یادگیری، درس را غیرفعال کنید."
+          };
+        }
+
+        await tx.lesson.delete({
+          where: {
+            id
+          }
+        });
+
+        return {
+          ok: true,
+          lesson
+        };
+      },
+      {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable
+      }
+    );
   } catch (error) {
     return writeLessonError(error);
   }

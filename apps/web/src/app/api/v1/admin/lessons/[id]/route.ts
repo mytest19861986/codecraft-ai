@@ -1,5 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { isAdminLessonInput, readLessonInput, serializeAdminLesson, updateAdminLesson } from "@/lib/admin/lessons";
+import {
+  deleteAdminLesson,
+  isAdminLessonInput,
+  readLessonInput,
+  serializeAdminLesson,
+  updateAdminLesson
+} from "@/lib/admin/lessons";
 import { ADMIN_SESSION_COOKIE_NAME, verifyAdminSessionCookie } from "@/lib/security/admin-session";
 
 type RouteContext = {
@@ -67,5 +73,24 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     ok: true,
     authenticated: true,
     lesson: serializeAdminLesson(result.lesson)
+  });
+}
+
+export async function DELETE(request: NextRequest, context: RouteContext) {
+  if (!isAdminRequest(request)) {
+    return unauthenticatedResponse();
+  }
+
+  const { id } = await context.params;
+  const result = await deleteAdminLesson(id);
+
+  if (!result.ok) {
+    return errorResponse(result.code, result.message, result.status);
+  }
+
+  return NextResponse.json({
+    ok: true,
+    authenticated: true,
+    lesson: result.lesson
   });
 }

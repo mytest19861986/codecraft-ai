@@ -3,7 +3,13 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { createAdminLesson, isAdminLessonInput, readLessonInput, updateAdminLesson } from "@/lib/admin/lessons";
+import {
+  createAdminLesson,
+  deleteAdminLesson,
+  isAdminLessonInput,
+  readLessonInput,
+  updateAdminLesson
+} from "@/lib/admin/lessons";
 import { ADMIN_SESSION_COOKIE_NAME, verifyAdminSessionCookie } from "@/lib/security/admin-session";
 
 async function requireAdminSession() {
@@ -56,4 +62,17 @@ export async function updateLessonAction(id: string, formData: FormData) {
   revalidatePath("/admin/lessons");
   revalidatePath(editPath);
   redirect(`${editPath}?saved=updated`);
+}
+
+export async function deleteLessonAction(id: string) {
+  await requireAdminSession();
+
+  const result = await deleteAdminLesson(id);
+
+  if (!result.ok) {
+    redirectWithError("/admin/lessons", result.message);
+  }
+
+  revalidatePath("/admin/lessons");
+  redirect("/admin/lessons?saved=deleted");
 }
