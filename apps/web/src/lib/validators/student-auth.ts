@@ -3,15 +3,41 @@ import { z } from "zod";
 const iranianMobileRegex = /^09\d{9}$/;
 const nationalIdRegex = /^\d{10}$/;
 
+function normalizeLocalizedDigits(value: string) {
+  return value.replace(/[\u06F0-\u06F9\u0660-\u0669]/g, (digit) => {
+    const charCode = digit.charCodeAt(0);
+
+    return String(charCode >= 0x06f0 ? charCode - 0x06f0 : charCode - 0x0660);
+  });
+}
+
+function normalizeDigits(value: string) {
+  return normalizeLocalizedDigits(value).replace(/\D/g, "").slice(0, 11);
+}
+
+function normalizeNationalId(value: string) {
+  return normalizeLocalizedDigits(value).replace(/\D/g, "").slice(0, 10);
+}
+
 const phoneSchema = z
   .string()
-  .length(11, "INVALID_PHONE")
-  .refine((value) => iranianMobileRegex.test(value), "INVALID_PHONE");
+  .transform(normalizeDigits)
+  .pipe(
+    z
+      .string()
+      .length(11, "INVALID_PHONE")
+      .refine((value) => iranianMobileRegex.test(value), "INVALID_PHONE")
+  );
 
 const nationalIdSchema = z
   .string()
-  .length(10, "INVALID_NATIONAL_ID")
-  .refine((value) => nationalIdRegex.test(value), "INVALID_NATIONAL_ID")
+  .transform(normalizeNationalId)
+  .pipe(
+    z
+      .string()
+      .length(10, "INVALID_NATIONAL_ID")
+      .refine((value) => nationalIdRegex.test(value), "INVALID_NATIONAL_ID")
+  )
   .optional();
 
 const passwordSchema = z.string().min(8).max(128);

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useState, type ClipboardEvent, type FormEvent } from "react";
 
 type AuthMode = "login" | "register";
 type FormState = "idle" | "submitting" | "success" | "error";
@@ -58,8 +58,16 @@ const fieldMessages: Record<string, string> = {
   password: "رمز عبور باید حداقل ۸ کاراکتر باشد."
 };
 
+function normalizeLocalizedDigits(value: string) {
+  return value.replace(/[\u06F0-\u06F9\u0660-\u0669]/g, (digit) => {
+    const charCode = digit.charCodeAt(0);
+
+    return String(charCode >= 0x06f0 ? charCode - 0x06f0 : charCode - 0x0660);
+  });
+}
+
 function sanitizeDigits(value: string, maxLength: number) {
-  return value.replace(/\D/g, "").slice(0, maxLength);
+  return normalizeLocalizedDigits(value).replace(/\D/g, "").slice(0, maxLength);
 }
 
 function getErrorMessage(error: ApiError | null) {
@@ -99,6 +107,16 @@ export function StudentAuthForm({ mode }: StudentAuthFormProps) {
   const [nationalId, setNationalId] = useState("");
   const content = copy[mode];
   const isRegister = mode === "register";
+
+  function onPhonePaste(event: ClipboardEvent<HTMLInputElement>) {
+    event.preventDefault();
+    setPhone(sanitizeDigits(event.clipboardData.getData("text"), 11));
+  }
+
+  function onNationalIdPaste(event: ClipboardEvent<HTMLInputElement>) {
+    event.preventDefault();
+    setNationalId(sanitizeDigits(event.clipboardData.getData("text"), 10));
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -204,11 +222,12 @@ export function StudentAuthForm({ mode }: StudentAuthFormProps) {
             inputMode="numeric"
             maxLength={11}
             name="phone"
-            type="text"
+            type="tel"
             autoComplete="tel"
             pattern="09[0-9]{9}"
             value={phone}
             onChange={(event) => setPhone(sanitizeDigits(event.target.value, 11))}
+            onPaste={onPhonePaste}
             required
             placeholder="09123456789"
             aria-invalid={Boolean(getFieldError(apiError, "phone"))}
@@ -233,6 +252,7 @@ export function StudentAuthForm({ mode }: StudentAuthFormProps) {
               pattern="[0-9]{10}"
               value={nationalId}
               onChange={(event) => setNationalId(sanitizeDigits(event.target.value, 10))}
+              onPaste={onNationalIdPaste}
               placeholder="0012345678"
               aria-invalid={Boolean(getFieldError(apiError, "nationalId"))}
             />
