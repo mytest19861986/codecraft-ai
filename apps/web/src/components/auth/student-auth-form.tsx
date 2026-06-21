@@ -54,7 +54,6 @@ const errorMessages: Record<string, string> = {
 const fieldMessages: Record<string, string> = {
   name: "نام باید حداقل ۲ کاراکتر باشد.",
   phone: "شماره موبایل باید با 09 شروع شود و ۱۱ رقم باشد.",
-  nationalId: "کد ملی باید دقیقاً ۱۰ رقم باشد.",
   password: "رمز عبور باید حداقل ۸ کاراکتر باشد."
 };
 
@@ -104,18 +103,12 @@ export function StudentAuthForm({ mode }: StudentAuthFormProps) {
   const [state, setState] = useState<FormState>("idle");
   const [apiError, setApiError] = useState<ApiError | null>(null);
   const [phone, setPhone] = useState("");
-  const [nationalId, setNationalId] = useState("");
   const content = copy[mode];
   const isRegister = mode === "register";
 
   function onPhonePaste(event: ClipboardEvent<HTMLInputElement>) {
     event.preventDefault();
     setPhone(sanitizeDigits(event.clipboardData.getData("text"), 11));
-  }
-
-  function onNationalIdPaste(event: ClipboardEvent<HTMLInputElement>) {
-    event.preventDefault();
-    setNationalId(sanitizeDigits(event.clipboardData.getData("text"), 10));
   }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -125,7 +118,6 @@ export function StudentAuthForm({ mode }: StudentAuthFormProps) {
     const formData = new FormData(form);
     const payload = {
       ...(isRegister ? { name: String(formData.get("name") ?? "").trim() } : {}),
-      ...(isRegister && nationalId ? { nationalId } : {}),
       phone,
       password: String(formData.get("password") ?? "")
     };
@@ -157,7 +149,6 @@ export function StudentAuthForm({ mode }: StudentAuthFormProps) {
         setState("success");
         form.reset();
         setPhone("");
-        setNationalId("");
 
         if (isRegister) {
           return;
@@ -237,31 +228,6 @@ export function StudentAuthForm({ mode }: StudentAuthFormProps) {
             <span className="mt-1 block text-xs font-bold text-[#ffd6e5]">{getFieldError(apiError, "phone")}</span>
           ) : null}
         </label>
-
-        {isRegister ? (
-          <label className="block">
-            <span className="text-sm font-bold text-[#d9dcf0]">کد ملی</span>
-            <input
-              className="mt-2 w-full rounded-md border border-white/10 bg-white/5 px-4 py-3 text-center text-white outline-none transition focus:border-[#39ff88]"
-              dir="ltr"
-              inputMode="numeric"
-              maxLength={10}
-              name="nationalId"
-              type="text"
-              autoComplete="off"
-              pattern="[0-9]{10}"
-              value={nationalId}
-              onChange={(event) => setNationalId(sanitizeDigits(event.target.value, 10))}
-              onPaste={onNationalIdPaste}
-              placeholder="0012345678"
-              aria-invalid={Boolean(getFieldError(apiError, "nationalId"))}
-            />
-            <span className="mt-2 block text-xs leading-6 text-[#a9aec7]">فقط ۱۰ رقم، بدون خط تیره یا فاصله.</span>
-            {getFieldError(apiError, "nationalId") ? (
-              <span className="mt-1 block text-xs font-bold text-[#ffd6e5]">{getFieldError(apiError, "nationalId")}</span>
-            ) : null}
-          </label>
-        ) : null}
 
         <label className="block">
           <span className="text-sm font-bold text-[#d9dcf0]">رمز عبور</span>

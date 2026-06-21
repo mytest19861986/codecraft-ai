@@ -1,8 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import { useState } from "react";
-
 import { SectionHeading } from "@/components/ui/section-heading";
 
 type MiniCourseVideo = {
@@ -10,8 +7,6 @@ type MiniCourseVideo = {
   title: string;
   duration: string;
   isLocked: boolean;
-  videoUrl: string;
-  coverUrl: string;
   description?: string;
 };
 
@@ -21,27 +16,21 @@ const videos: MiniCourseVideo[] = [
     title: "جلسه اول: ساخت چت‌باکس نئونی پایتون",
     duration: "۲۴ دقیقه",
     isLocked: false,
-    videoUrl: "/videos/codecraft-session-1.mp4",
-    coverUrl: "/images/video-cover-session-1.jpg",
-    description: "شروع عملی با یک پروژه کوچک، جذاب و قابل نمایش."
+    description: "دموی محتوای جلسه اول / آماده برای جایگزینی با ویدیوی واقعی."
   },
   {
     id: "session-2",
     title: "جلسه دوم: منطق پاسخ‌گویی و تمرین XP",
     duration: "به‌زودی",
     isLocked: true,
-    videoUrl: "/videos/codecraft-session-2.mp4",
-    coverUrl: "/images/video-cover-session-2.jpg",
-    description: "در نسخه فعلی قفل است و در فازهای بعدی با مسیر تمرین رسمی باز می‌شود."
+    description: "فاز بعدی؛ همراه با مسیر تمرین رسمی باز می‌شود."
   },
   {
     id: "session-3",
     title: "جلسه سوم: آماده‌سازی خروجی نهایی",
     duration: "به‌زودی",
     isLocked: true,
-    videoUrl: "/videos/codecraft-session-3.mp4",
-    coverUrl: "/images/video-cover-session-3.jpg",
-    description: "مرحله نهایی برای تبدیل ایده به یک نمونه قابل ارائه."
+    description: "فاز بعدی؛ برای تبدیل ایده به یک نمونه قابل ارائه."
   }
 ];
 
@@ -62,9 +51,6 @@ function LockIcon() {
 }
 
 export function MiniCourseVideoGrid() {
-  const [playingId, setPlayingId] = useState<string | null>(null);
-  const [videoErrors, setVideoErrors] = useState<Record<string, boolean>>({});
-
   return (
     <section className="mx-auto w-full max-w-6xl px-5 py-14 sm:py-20" dir="rtl">
       <div className="rounded-lg border border-purple-500/25 bg-[#0d0d13]/92 p-5 shadow-[0_0_44px_rgba(168,85,247,0.13)] sm:p-7 lg:p-8">
@@ -76,9 +62,6 @@ export function MiniCourseVideoGrid() {
 
         <div className="mt-9 grid grid-cols-1 gap-5 md:grid-cols-3">
           {videos.map((video) => {
-            const isPlaying = playingId === video.id;
-            const hasVideoError = Boolean(videoErrors[video.id]);
-
             return (
               <article
                 aria-label={video.isLocked ? `${video.title} — قفل` : undefined}
@@ -96,49 +79,25 @@ export function MiniCourseVideoGrid() {
                       : "bg-[radial-gradient(circle_at_25%_20%,rgba(34,197,94,0.26),transparent_30%),radial-gradient(circle_at_80%_70%,rgba(168,85,247,0.3),transparent_34%),linear-gradient(135deg,#111827,#0d0d13)]"
                   }`}
                 >
-                  {isPlaying ? (
-                    <video
-                      autoPlay
-                      className="size-full bg-black object-cover"
-                      controls
-                      onError={() => {
-                        setPlayingId(null);
-                        setVideoErrors((current) => ({ ...current, [video.id]: true }));
-                      }}
-                      poster={video.coverUrl}
-                      preload="metadata"
-                      src={video.videoUrl}
-                    />
-                  ) : (
-                    <>
-                      <Image
-                        alt={video.title}
-                        className={`object-cover transition-all duration-300 ${
-                          video.isLocked ? "opacity-45 grayscale" : "opacity-85 group-hover:scale-105 group-hover:opacity-100"
-                        }`}
-                        fill
-                        onError={(event) => {
-                          event.currentTarget.style.display = "none";
-                        }}
-                        priority={!video.isLocked}
-                        sizes="(min-width: 768px) 33vw, 100vw"
-                        src={video.coverUrl}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d13] via-[#0d0d13]/25 to-transparent" />
-                    </>
-                  )}
+                  <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.08)_0_1px,transparent_1px_18px)] opacity-30" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d13] via-[#0d0d13]/25 to-transparent" />
+                  <div className="absolute inset-x-5 top-5 flex items-center justify-between gap-3">
+                    <span className="h-2 w-16 rounded-full bg-white/[0.18]" />
+                    <span className="h-2 w-10 rounded-full bg-white/[0.12]" />
+                  </div>
 
-                  {!video.isLocked && !isPlaying ? (
-                    <button
-                      aria-label={`پخش ${video.title}`}
-                      className="absolute left-1/2 top-1/2 grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-[#22c55e]/80 bg-[#22c55e] text-black shadow-[0_0_30px_rgba(34,197,94,0.65)] transition-all duration-300 before:absolute before:inset-[-8px] before:animate-pulse before:rounded-full before:border before:border-[#39ff88]/35 before:shadow-[0_0_22px_rgba(57,255,136,0.35)] before:content-[''] hover:scale-110 hover:bg-[#39ff88] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#39ff88] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d0d13]"
-                      onClick={() => setPlayingId(video.id)}
-                      type="button"
-                    >
-                      <svg aria-hidden="true" className="relative z-10 mr-1 size-7" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </button>
+                  {!video.isLocked ? (
+                    <div className="absolute left-1/2 top-1/2 flex w-[min(82%,18rem)] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-3 text-center">
+                      {/* TODO: restore real video button/player only after real video assets are added. */}
+                      <span className="grid size-16 place-items-center rounded-full border border-[#22c55e]/80 bg-[#22c55e] text-black shadow-[0_0_30px_rgba(34,197,94,0.52)]">
+                        <svg aria-hidden="true" className="relative z-10 mr-1 size-7" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </span>
+                      <span className="rounded-md border border-[#22c55e]/25 bg-[#0d0d13]/80 px-3 py-2 text-xs font-black leading-6 text-[#ecfff4] shadow-[0_10px_30px_rgba(0,0,0,0.25)]">
+                        کارت دموی جلسه اول؛ ویدیو واقعی هنوز اضافه نشده است.
+                      </span>
+                    </div>
                   ) : null}
 
                   {video.isLocked ? (
@@ -150,11 +109,6 @@ export function MiniCourseVideoGrid() {
                     </div>
                   ) : null}
 
-                  {hasVideoError && !isPlaying ? (
-                    <p className="absolute inset-x-4 bottom-4 rounded-md border border-[#22c55e]/25 bg-[#0d0d13]/90 px-3 py-2 text-center text-xs font-bold leading-6 text-[#ecfff4] shadow-[0_10px_30px_rgba(0,0,0,0.25)]">
-                      ویدیو هنوز آماده نیست؛ به‌زودی اضافه می‌شود.
-                    </p>
-                  ) : null}
                 </div>
 
                 <div className="p-5">
